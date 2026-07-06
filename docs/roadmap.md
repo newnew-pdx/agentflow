@@ -12,12 +12,21 @@
 
 详细说明见 [Step0：CLI 项目骨架](steps/step0-cli-skeleton.md)。
 
-## Step1：核心协议
+## Step1：核心协议（已完成）
 
 - 定义版本化的 `TaskPacket`；
 - 定义 `ExecutionResult` 和 `ReviewResult`；
 - 使用 Zod 实现运行时校验；
-- 为有效和无效协议样例补充测试。
+- 提供协议自动识别与 `validate` CLI 命令；
+- 为有效和无效协议补充 JSON 样例。
+
+详细说明见 [Step1：任务与反馈协议](steps/step1-protocols.md)。
+
+## Step2：本地记忆与 Context Pack
+
+- 建立 `.agent/` 本地记忆文件的读写约定；
+- 汇总项目目标、架构、约束、决策和当前状态；
+- 生成可供后续 Planner/Executor 使用的 context pack。
 
 ## 后续阶段：状态与执行闭环
 

@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { initCommand } from './commands/init.js';
 import { planCommand } from './commands/plan.js';
 import { statusCommand } from './commands/status.js';
+import { validateCommand } from './commands/validate.js';
 
 export function createCli(): Command {
   const program = new Command();
@@ -26,6 +27,12 @@ export function createCli(): Command {
     .description('Plan work for a goal (placeholder in Step0)')
     .argument('<goal>', 'goal to plan')
     .action(planCommand);
+
+  program
+    .command('validate')
+    .description('Validate an AgentFlow protocol JSON file')
+    .argument('<file>', 'JSON file to validate')
+    .action(validateCommand);
 
   return program;
 }

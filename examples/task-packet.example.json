@@ -1,0 +1,18 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S001",
+  "runId": "R001",
+  "goal": "为 Java 微服务项目增加 JWT 认证与用户上下文透传",
+  "background": "当前服务仅有基础 HTTP 接口，尚未建立统一的身份认证机制。",
+  "scope": [
+    "设计并实现 JWT 的签发与校验",
+    "在服务间透传已认证的用户上下文",
+    "补充认证成功、失败和过期场景测试"
+  ],
+  "outOfScope": ["实现第三方 OAuth 登录", "改造现有业务权限模型"],
+  "contextFiles": ["pom.xml", "src/main/java/com/example/security/SecurityConfig.java"],
+  "constraints": ["不得在日志中输出完整 token", "保持现有公开健康检查接口无需认证"],
+  "acceptanceCommands": ["./mvnw test", "./mvnw verify"],
+  "requiresApproval": true,
+  "createdAt": "2026-07-06T12:00:00.000Z"
+}

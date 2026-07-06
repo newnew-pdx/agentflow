@@ -1,0 +1,12 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "1",
+  "goal": "为 Java 微服务项目增加 JWT 认证",
+  "scope": [],
+  "outOfScope": [],
+  "contextFiles": [],
+  "constraints": [],
+  "acceptanceCommands": [],
+  "requiresApproval": "yes",
+  "createdAt": "not-a-date"
+}
