@@ -7,6 +7,7 @@ import { validateCommand } from './commands/validate.js';
 export function createCli(): Command {
   const program = new Command();
 
+  // 所有命令都从这里注册；后续 plan/execute/review 会继续挂到同一个 CLI 入口上。
   program
     .name('agentflow')
     .description('Local orchestration for AI-assisted development workflows')

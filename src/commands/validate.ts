@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { validateProtocol } from '../protocols/index.js';
 
+// 把 Zod 的路径数组转成人类更容易定位的字段路径。
 function formatPath(path: PropertyKey[]): string {
   return path.length === 0 ? '<root>' : path.map(String).join('.');
 }
@@ -9,6 +10,7 @@ function formatPath(path: PropertyKey[]): string {
 export async function validateCommand(file: string): Promise<void> {
   let source: string;
   try {
+    // validate 接收用户传入的相对路径；resolve 后按当前工作目录读取。
     source = await readFile(resolve(file), 'utf8');
   } catch (error: unknown) {
     const notFound = error instanceof Error && 'code' in error && error.code === 'ENOENT';
@@ -19,6 +21,7 @@ export async function validateCommand(file: string): Promise<void> {
 
   let data: unknown;
   try {
+    // JSON 语法错误和协议字段错误分开处理，方便用户判断该改文件格式还是改字段内容。
     data = JSON.parse(source);
   } catch (error: unknown) {
     const reason = error instanceof Error ? error.message : 'invalid JSON syntax';
@@ -36,6 +39,7 @@ export async function validateCommand(file: string): Promise<void> {
         console.error(`- ${formatPath(issue.path)}: ${issue.message}`);
       }
     } else {
+      // unknown 通常意味着缺少协议特征字段，例如 TaskPacket 没有 goal/scope。
       console.error('- <root>: unable to detect protocol type from required fields');
     }
     process.exitCode = 1;
