@@ -1,0 +1,27 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S001",
+  "runId": "R001",
+  "status": "completed",
+  "summary": "已完成示例执行，并通过 AgentFlow Step3 导入流程验证。",
+  "filesChanged": [
+    "src/example.ts",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "command": "npm run build",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "rawOutput": "Build completed successfully."
+    }
+  ],
+  "deviations": [],
+  "blockers": [],
+  "remainingRisks": [
+    "此文件仅用于 Step3 流程验收，不代表真实业务执行结果。"
+  ],
+  "suggestedNextAction": "review",
+  "createdAt": "2026-07-07T12:00:00.000Z"
+}

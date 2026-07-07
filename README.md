@@ -1,5 +1,35 @@
 # AgentFlow
 
+## Step3 更新：半自动任务流
+
+当前版本已完成 Step3：AgentFlow 可以通过文件系统串联 `plan -> approve -> export-task -> import-result -> status`。
+
+常用命令：
+
+```bash
+npm run dev -- init
+npm run dev -- build-context
+npm run dev -- plan "为 Java 微服务项目增加 JWT 认证"
+npm run dev -- validate .agent/steps/S001/runs/R001/task.json
+npm run dev -- approve S001
+npm run dev -- export-task S001
+npm run dev -- import-result examples/execution-result.s001-r001.example.json
+npm run dev -- status
+```
+
+Step 数据保存在 `.agent/steps/` 下，例如 `.agent/steps/S001/runs/R001/task.json`。本阶段仍不自动调用 Codex、Claude Code、AgentChat，不自动 Review、Commit 或 Push，也不引入 SQLite 状态机。
+
+推荐开发方式：
+
+```text
+agentflow        ：稳定主目录，main 分支，与远程保持一致
+agentflow-codex  ：Codex 执行目录，使用 feature branch 开发
+```
+
+Codex 只在 `agentflow-codex` 中工作；主目录 `agentflow` 不交给 Codex 打开，以避免 Git 锁冲突。每个 Step 在 worktree 中开发、验证和提交，验证通过后再合并到 `main`，不要让 Codex 直接 push `main`。
+
+完整说明见 [Step3：半自动任务流](docs/steps/step3-semi-auto-workflow.md)。
+
 ## Step2 更新：本地记忆与 Context Pack
 
 当前版本已经完成 Step2：AgentFlow 可以维护 `.agent/generated/current-state.md`，并通过 `build-context` 生成 `.agent/generated/context-pack.md`。

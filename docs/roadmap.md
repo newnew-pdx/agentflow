@@ -37,3 +37,13 @@
 - 编排 Git 提交并更新项目记忆和 Context Pack。
 
 后续范围将根据前一步协议和验收结果继续拆分，避免一次引入过多复杂度。
+
+## Step3：半自动任务流（已完成）
+
+- 用 `.agent/steps/` 文件结构保存 Step 状态，不引入 SQLite。
+- `plan` 会创建 `S001/R001`、中文说明文档、`state.json` 和符合 TaskPacket schema 的 `task.json`。
+- 新增 `approve`、`export-task`、`import-result` 命令，串联人工审批、任务包导出和 ExecutionResult 导入。
+- `status` 会展示 Step 列表、当前状态、目标、Run 和 ExecutionResult 摘要。
+- 当前仍不接入 Codex、Claude Code、AgentChat，不自动测试、Review、Commit 或 Push。
+
+详细说明见 [Step3：半自动任务流](steps/step3-semi-auto-workflow.md)。

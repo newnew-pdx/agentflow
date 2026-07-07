@@ -1,5 +1,8 @@
 import { Command } from 'commander';
+import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
+import { exportTaskCommand } from './commands/export-task.js';
+import { importResultCommand } from './commands/import-result.js';
 import { initCommand } from './commands/init.js';
 import { planCommand } from './commands/plan.js';
 import { statusCommand } from './commands/status.js';
@@ -26,9 +29,27 @@ export function createCli(): Command {
 
   program
     .command('plan')
-    .description('Plan work for a goal (placeholder in Step0)')
+    .description('Plan work for a goal and create a draft Step')
     .argument('<goal>', 'goal to plan')
     .action(planCommand);
+
+  program
+    .command('approve')
+    .description('Approve a planned Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(approveCommand);
+
+  program
+    .command('export-task')
+    .description('Export the current TaskPacket for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(exportTaskCommand);
+
+  program
+    .command('import-result')
+    .description('Import an ExecutionResult JSON file')
+    .argument('<file>', 'ExecutionResult JSON file')
+    .action(importResultCommand);
 
   program
     .command('build-context')
