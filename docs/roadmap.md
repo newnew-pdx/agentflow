@@ -22,7 +22,7 @@
 
 详细说明见 [Step1：任务与反馈协议](steps/step1-protocols.md)。
 
-## Step2：本地记忆与 Context Pack
+## Step2：本地记忆与 Context Pack（已完成）
 
 - 建立 `.agent/` 本地记忆文件的读写约定；
 - 汇总项目目标、架构、约束、决策和当前状态；

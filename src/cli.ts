@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { buildContextCommand } from './commands/build-context.js';
 import { initCommand } from './commands/init.js';
 import { planCommand } from './commands/plan.js';
 import { statusCommand } from './commands/status.js';
@@ -28,6 +29,11 @@ export function createCli(): Command {
     .description('Plan work for a goal (placeholder in Step0)')
     .argument('<goal>', 'goal to plan')
     .action(planCommand);
+
+  program
+    .command('build-context')
+    .description('Build the local AgentFlow context pack')
+    .action(buildContextCommand);
 
   program
     .command('validate')

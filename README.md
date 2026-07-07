@@ -1,5 +1,41 @@
 # AgentFlow
 
+## Step2 更新：本地记忆与 Context Pack
+
+当前版本已经完成 Step2：AgentFlow 可以维护 `.agent/generated/current-state.md`，并通过 `build-context` 生成 `.agent/generated/context-pack.md`。
+
+新增能力：
+
+- `init` 会补齐 `.agent/project/`、`.agent/steps/`、`.agent/decisions/`、`.agent/generated/`，不会覆盖已有用户文件；
+- 如果根目录缺少 `AGENTS.md`，`init` 会创建中文基础模板；
+- `build-context` 会读取 `AGENTS.md`、`README.md`、项目愿景、架构、约束、决策记录和 Step 文档；
+- `build-context` 会汇总 Git 分支、工作区状态和变更文件；当前目录不是 Git 仓库时不会失败；
+- Context Pack 会对 `.env`、密钥文件、依赖目录和生成目录做路径级敏感过滤。
+
+常用命令：
+
+```bash
+npm install
+npm run build
+npm run dev -- --help
+npm run dev -- status
+npm run dev -- init
+npm run dev -- build-context
+npm run dev -- status
+npm run dev -- validate examples/task-packet.example.json
+npm run dev -- validate examples/execution-result.example.json
+npm run dev -- validate examples/review-result.example.json
+```
+
+生成文件：
+
+```text
+.agent/generated/current-state.md
+.agent/generated/context-pack.md
+```
+
+最新说明见 [Step2：本地记忆与 Context Pack](docs/steps/step2-local-memory-context.md)。
+
 AgentFlow 是一个本地开发编排 CLI，目标是把依赖人工衔接的 AI 辅助开发流程逐步固化为可检查、可恢复、可追踪的工作流：
 
 `Plan -> Approve -> Execute -> Verify -> Review -> Fix/Replan -> Commit -> Update Memory -> Next Step`
