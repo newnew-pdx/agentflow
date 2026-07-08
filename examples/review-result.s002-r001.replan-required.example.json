@@ -1,0 +1,17 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S002",
+  "runId": "R001",
+  "verdict": "replan_required",
+  "summary": "当前 Step 同时覆盖登录、网关鉴权、权限模型和用户上下文透传，执行边界过大，建议重新拆分为多个更小的 Step。",
+  "findings": [
+    {
+      "severity": "high",
+      "file": "docs/auth-scope.md",
+      "problem": "任务范围跨越多个服务边界，缺少每个子任务的验收条件。",
+      "requiredFix": "将 JWT 登录、网关鉴权、用户上下文透传拆分为独立 Step，并分别定义验收命令和回传证据。"
+    }
+  ],
+  "suggestedNextAction": "replan",
+  "createdAt": "2026-07-08T09:20:00.000Z"
+}

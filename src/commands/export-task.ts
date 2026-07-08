@@ -17,14 +17,15 @@ export async function exportTaskCommand(stepId: string): Promise<void> {
     return;
   }
 
-  if (state.status !== 'APPROVED') {
-    console.warn(`Warning: Step ${stepId} is ${state.status}, not APPROVED. Export continues in Step3.`);
+  if (state.status !== 'APPROVED' && state.status !== 'FIX_APPROVED') {
+    console.warn(`Warning: Step ${stepId} is ${state.status}, not APPROVED/FIX_APPROVED. Export continues.`);
   }
 
   const now = new Date().toISOString();
+  const nextStatus = state.status === 'FIX_APPROVED' ? 'FIX_EXPORTED' : 'EXPORTED';
   await writeStepState(stepId, {
     ...state,
-    status: 'EXPORTED',
+    status: nextStatus,
     exportedAt: now,
     updatedAt: now,
   });

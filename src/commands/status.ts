@@ -53,5 +53,12 @@ export async function statusCommand(): Promise<void> {
         `  Review: ${state.review.verdict}, findings: ${state.review.findingsCount}, highest: ${highest}, next: ${state.review.suggestedNextAction}`,
       );
     }
+    if (state.fixSourceRunId) {
+      const findings = state.fixFindingsCount ?? 0;
+      console.log(`  Fix: source ${state.fixSourceRunId} -> current ${state.currentRunId}, findings: ${findings}`);
+    }
+    if (state.replanSourceRunId) {
+      console.log(`  Replan: requested from ${state.replanSourceRunId}`);
+    }
   }
 }

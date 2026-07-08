@@ -9,13 +9,15 @@ export async function approveCommand(stepId: string): Promise<void> {
   }
 
   const now = new Date().toISOString();
+  const nextStatus = state.status === 'FIX_DRAFT' ? 'FIX_APPROVED' : 'APPROVED';
   await writeStepState(stepId, {
     ...state,
-    status: 'APPROVED',
+    status: nextStatus,
     approvedAt: now,
     updatedAt: now,
   });
 
   console.log(`Step ${stepId} approved.`);
+  console.log(`Run: ${state.currentRunId}`);
   console.log(`Next action: export-task ${stepId}`);
 }

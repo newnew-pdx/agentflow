@@ -9,6 +9,10 @@ export const stepStatuses = [
   'CHANGES_REQUIRED',
   'REPLAN_REQUIRED',
   'REVIEW_REJECTED',
+  'FIX_DRAFT',
+  'FIX_APPROVED',
+  'FIX_EXPORTED',
+  'REPLAN_DRAFT',
   'COMPLETED',
 ] as const;
 
@@ -55,6 +59,12 @@ export type StepState = {
     hasUncommittedChanges: boolean;
     sensitiveWarnings: string[];
   };
+  previousRunId?: string;
+  fixCreatedAt?: string;
+  fixSourceRunId?: string;
+  fixFindingsCount?: number;
+  replanRequestedAt?: string;
+  replanSourceRunId?: string;
 };
 
 export function isStepStatus(value: unknown): value is StepStatus {

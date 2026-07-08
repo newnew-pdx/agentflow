@@ -1,4 +1,24 @@
 # AgentFlow
+## Step6 更新：Fix / Replan Packet 生成
+
+当前版本新增 `create-fix <stepId>` 和 `create-replan <stepId>`。它们根据当前 Run 的 ReviewResult 生成下一轮修复任务或重新规划请求，但仍不接入 Codex CLI、Claude Code、AgentChat，不自动调用网页 AI，不自动生成业务代码，不自动 commit，也不自动 push。
+
+常用命令：
+```bash
+npm run dev -- import-review examples/review-result.s001-r001.changes-required.example.json
+npm run dev -- create-fix S001
+npm run dev -- validate .agent/steps/S001/runs/R002/task.json
+npm run dev -- approve S001
+npm run dev -- export-task S001
+npm run dev -- status
+```
+
+`create-fix S001` 会读取 `state.json` 中的 `currentRunId`，在同一个 Step 下创建下一个 Run，例如 `R002`，并生成 `.agent/steps/S001/runs/R002/task.json` 与 `fix-from-review.md`。状态会进入 `FIX_DRAFT`，后续 `approve` 和 `export-task` 会继续作用于当前 Run。
+
+`create-replan S001` 会在 verdict 为 `replan_required` 时生成 `.agent/steps/S001/replan-request.md`，并将状态更新为 `REPLAN_DRAFT`，不会创建新的 TaskPacket，也不会自动修改原始计划。
+
+完整说明见 [Step6：Fix / Replan Packet 生成](docs/steps/step6-fix-replan-packet.md)。
+
 ## Step5 更新：ReviewResult 导入与审查流
 
 当前版本新增结构化审查结果导入，不接入 Codex CLI、Claude Code、AgentChat，也不会自动调用网页 AI、生成修复代码、commit 或 push。

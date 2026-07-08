@@ -72,3 +72,14 @@
 - 当前仍不接入 Codex、Claude Code、AgentChat，不自动测试、Review、Commit 或 Push。
 
 详细说明见 [Step3：半自动任务流](steps/step3-semi-auto-workflow.md)。
+## Step6：Fix / Replan Packet 生成（已完成）
+
+- 新增 `create-fix <stepId>`，根据当前 Run 的 `review.json` 生成同一 Step 下的下一轮修复 Run，例如 `S001/R002`。
+- 新增 `create-replan <stepId>`，在 `replan_required` 时生成 `.agent/steps/<stepId>/replan-request.md`。
+- Fix Run 会生成符合 TaskPacket schema 的 `task.json`，并生成面向人和 Executor 的 `fix-from-review.md`。
+- 扩展状态：`FIX_DRAFT`、`FIX_APPROVED`、`FIX_EXPORTED`、`REPLAN_DRAFT`。
+- `approve` 和 `export-task` 继续使用 `state.json` 中的 `currentRunId`，因此可以自然作用于修复 Run。
+- `status` 会展示 Fix 来源、当前 Run、findings 数量，以及 Replan 请求来源。
+- 本阶段仍不自动调用 Codex CLI / AgentChat / Claude Code，不自动生成业务代码，不自动 commit / push。
+
+详细说明见 [Step6：Fix / Replan Packet 生成](steps/step6-fix-replan-packet.md)。

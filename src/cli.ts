@@ -1,6 +1,8 @@
 import { Command } from 'commander';
 import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
+import { createFixCommand } from './commands/create-fix.js';
+import { createReplanCommand } from './commands/create-replan.js';
 import { exportTaskCommand } from './commands/export-task.js';
 import { gitCheckCommand } from './commands/git-check.js';
 import { importReviewCommand } from './commands/import-review.js';
@@ -66,6 +68,18 @@ export function createCli(): Command {
     .description('Show the current ReviewResult for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(showReviewCommand);
+
+  program
+    .command('create-fix')
+    .description('Create the next fix TaskPacket from the current ReviewResult')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(createFixCommand);
+
+  program
+    .command('create-replan')
+    .description('Create a replan request from the current ReviewResult')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(createReplanCommand);
 
   program
     .command('verify')
