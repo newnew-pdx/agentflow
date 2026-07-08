@@ -2,11 +2,13 @@ import { Command } from 'commander';
 import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
 import { exportTaskCommand } from './commands/export-task.js';
+import { gitCheckCommand } from './commands/git-check.js';
 import { importResultCommand } from './commands/import-result.js';
 import { initCommand } from './commands/init.js';
 import { planCommand } from './commands/plan.js';
 import { statusCommand } from './commands/status.js';
 import { validateCommand } from './commands/validate.js';
+import { verifyCommand } from './commands/verify.js';
 
 export function createCli(): Command {
   const program = new Command();
@@ -50,6 +52,18 @@ export function createCli(): Command {
     .description('Import an ExecutionResult JSON file')
     .argument('<file>', 'ExecutionResult JSON file')
     .action(importResultCommand);
+
+  program
+    .command('verify')
+    .description('Run TaskPacket acceptance commands for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(verifyCommand);
+
+  program
+    .command('git-check')
+    .description('Collect Git evidence for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(gitCheckCommand);
 
   program
     .command('build-context')

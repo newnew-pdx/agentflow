@@ -3,6 +3,7 @@ export const stepStatuses = [
   'APPROVED',
   'EXPORTED',
   'RESULT_IMPORTED',
+  'VERIFIED',
   'BLOCKED',
   'COMPLETED',
 ] as const;
@@ -26,6 +27,20 @@ export type StepState = {
   exportedAt?: string;
   importedAt?: string;
   executionResult?: StepExecutionSummary;
+  verification?: {
+    status: 'passed' | 'failed' | 'skipped';
+    verifiedAt: string;
+    commands: number;
+    passed: number;
+    failed: number;
+  };
+  gitCheck?: {
+    checkedAt: string;
+    branch?: string;
+    changedFilesCount: number;
+    hasUncommittedChanges: boolean;
+    sensitiveWarnings: string[];
+  };
 };
 
 export function isStepStatus(value: unknown): value is StepStatus {

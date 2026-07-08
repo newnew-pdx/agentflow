@@ -1,5 +1,32 @@
 # AgentFlow
 
+## Step4 更新：验证器与 Git 证据
+
+当前版本新增本地验证和 Git 证据采集，不接入 Codex CLI、Claude Code 或 AgentChat，也不会自动 commit / push。
+
+常用命令：
+
+```bash
+npm run dev -- verify S001
+npm run dev -- git-check S001
+npm run dev -- status
+```
+
+`verify S001` 会读取 `.agent/steps/S001/runs/R001/task.json`，校验 TaskPacket，并依次执行 `acceptanceCommands`。结果写入 `.agent/steps/S001/runs/R001/tests.json`，同时把 `state.json` 更新为 `VERIFIED` 或 `BLOCKED`，并记录通过、失败和跳过摘要。
+
+`git-check S001` 会采集当前分支、工作区状态、变更文件、diff stat 和 patch。结果写入 `.agent/steps/S001/runs/R001/git.json`，可生成 `.agent/steps/S001/runs/R001/git-diff.patch`。如果变更路径命中 `.env`、`.env.*`、`*.pem`、`*.key`、`*.p12`、`*.jks`、`id_rsa` 或 `id_ed25519`，命令只记录风险提示，并避免把这些文件的 diff 内容写入 patch。
+
+推荐开发隔离策略：
+
+```text
+agentflow        ：稳定主目录，main 分支，与远程保持一致
+agentflow-codex  ：Codex 执行目录，使用 feature branch 开发
+```
+
+Codex 只在 `agentflow-codex` worktree 中开发；稳定主目录 `agentflow` 不交给 Codex 打开。验证通过后再由开发者人工合并到 `main`，不要让 Codex 直接 push `main`。
+
+完整说明见 [Step4：验证器与 Git 证据](docs/steps/step4-verifier-git-evidence.md)。
+
 ## Step3 更新：半自动任务流
 
 当前版本已完成 Step3：AgentFlow 可以通过文件系统串联 `plan -> approve -> export-task -> import-result -> status`。

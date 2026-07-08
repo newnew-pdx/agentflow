@@ -35,5 +35,17 @@ export async function statusCommand(): Promise<void> {
         console.log(`  ExecutionResult: ${path.relative(process.cwd(), resultPath)}`);
       }
     }
+    if (state.verification) {
+      console.log(
+        `  Verification: ${state.verification.status}, ${state.verification.passed} passed, ${state.verification.failed} failed`,
+      );
+    }
+    if (state.gitCheck) {
+      const branch = state.gitCheck.branch ? `, branch ${state.gitCheck.branch}` : '';
+      console.log(`  Git: ${state.gitCheck.changedFilesCount} changed files${branch}`);
+      if (state.gitCheck.sensitiveWarnings.length > 0) {
+        console.log(`  Git warnings: ${state.gitCheck.sensitiveWarnings.length}`);
+      }
+    }
   }
 }

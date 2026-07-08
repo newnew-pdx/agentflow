@@ -1,5 +1,18 @@
 # AgentFlow 路线图
 
+## Step4：验证器与 Git 证据（已完成）
+
+- 新增 `verify <stepId>`，读取当前 run 的 TaskPacket，并执行 `acceptanceCommands`。
+- 生成 `tests.json`，记录每条命令的 exitCode、stdout、stderr、耗时和通过状态。
+- 根据验证结果把 Step 状态更新为 `VERIFIED` 或 `BLOCKED`，并在 `state.json` 中写入 `verification` 摘要。
+- 新增 `git-check <stepId>`，采集分支、工作区状态、变更文件、diff stat 和安全过滤后的 patch。
+- 生成 `git.json`，可生成 `git-diff.patch`，并在 `state.json` 中写入 `gitCheck` 摘要。
+- 对 `.env`、密钥和证书类路径做敏感文件风险提示，不阻塞命令，但避免把敏感文件 diff 内容写入 patch。
+- `status` 会展示验证结果和 Git 检查摘要。
+- 本阶段仍不自动 Review、不自动 Commit、不接入 Codex CLI / AgentChat，也不引入 SQLite 状态机。
+
+详细说明见 [Step4：验证器与 Git 证据](steps/step4-verifier-git-evidence.md)。
+
 路线图用于说明实现顺序，不代表所列能力已经完成。
 
 ## Step0：CLI 项目骨架（已完成）
