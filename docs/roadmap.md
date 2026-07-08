@@ -1,4 +1,16 @@
 # AgentFlow 路线图
+## Step5：ReviewResult 导入与审查流（已完成）
+
+- 新增 `import-review <file>`，读取并校验结构化 ReviewResult JSON。
+- 根据 `stepId/runId` 写入 `.agent/steps/<stepId>/runs/<runId>/review.json`。
+- 自动生成 `.agent/steps/<stepId>/runs/<runId>/review-summary.md`，便于人工查看审查结论。
+- 在 `.agent/steps/<stepId>/state.json` 中新增 `review` 摘要字段，记录 verdict、reviewedAt、findingsCount、highestSeverity、suggestedNextAction 和 summary。
+- 将 ReviewResult verdict 映射为 Step 状态：`REVIEW_APPROVED`、`CHANGES_REQUIRED`、`REPLAN_REQUIRED`、`REVIEW_REJECTED`。
+- 新增 `show-review <stepId>`，展示当前 run 的审查摘要或 review.json 简要内容。
+- `status` 增强展示审查结论、finding 数量、最高严重级别和建议下一步。
+- 本阶段仍不自动调用网页 AI，不自动生成 Fix Packet / Replan，不自动 commit / push，也不接入 Codex CLI / AgentChat。
+
+详细说明见 [Step5：ReviewResult 导入与审查流](steps/step5-review-import.md)。
 
 ## Step4：验证器与 Git 证据（已完成）
 

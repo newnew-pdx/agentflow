@@ -47,5 +47,11 @@ export async function statusCommand(): Promise<void> {
         console.log(`  Git warnings: ${state.gitCheck.sensitiveWarnings.length}`);
       }
     }
+    if (state.review) {
+      const highest = state.review.highestSeverity ?? 'none';
+      console.log(
+        `  Review: ${state.review.verdict}, findings: ${state.review.findingsCount}, highest: ${highest}, next: ${state.review.suggestedNextAction}`,
+      );
+    }
   }
 }

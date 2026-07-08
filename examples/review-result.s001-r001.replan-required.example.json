@@ -1,0 +1,17 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S001",
+  "runId": "R001",
+  "verdict": "replan_required",
+  "summary": "当前任务同时覆盖认证、权限模型、用户上下文透传和网关改造，范围偏大且缺少服务边界说明，建议重新拆分计划。",
+  "findings": [
+    {
+      "severity": "high",
+      "file": "docs/auth-scope.md",
+      "problem": "缺少 JWT 认证在网关、业务服务和公共库之间的责任边界，执行结果无法判断哪些改动属于本 Step。",
+      "requiredFix": "重新规划为较小 Step：先完成单服务 JWT 认证与上下文透传，再单独处理网关和权限模型。"
+    }
+  ],
+  "suggestedNextAction": "replan",
+  "createdAt": "2026-07-08T09:15:00.000Z"
+}

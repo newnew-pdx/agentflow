@@ -1,5 +1,21 @@
 # AgentFlow
+## Step5 更新：ReviewResult 导入与审查流
 
+当前版本新增结构化审查结果导入，不接入 Codex CLI、Claude Code、AgentChat，也不会自动调用网页 AI、生成修复代码、commit 或 push。
+
+常用命令：
+
+```bash
+npm run dev -- import-review examples/review-result.s001-r001.changes-required.example.json
+npm run dev -- show-review S001
+npm run dev -- status
+```
+
+`import-review <file>` 会校验 ReviewResult JSON，根据 `stepId/runId` 写入 `.agent/steps/S001/runs/R001/review.json`，生成 `.agent/steps/S001/runs/R001/review-summary.md`，并把 verdict 摘要写入 `.agent/steps/S001/state.json`。verdict 会映射为 Step 状态：`approved -> REVIEW_APPROVED`、`changes_required -> CHANGES_REQUIRED`、`replan_required -> REPLAN_REQUIRED`、`rejected -> REVIEW_REJECTED`。
+
+`show-review S001` 会优先展示当前 run 的 `review-summary.md`；如果摘要不存在，则读取 `review.json` 做简要展示。`status` 现在会显示审查结论、finding 数量、最高严重级别和建议下一步。
+
+完整说明见 [Step5：ReviewResult 导入与审查流](docs/steps/step5-review-import.md)。
 ## Step4 更新：验证器与 Git 证据
 
 当前版本新增本地验证和 Git 证据采集，不接入 Codex CLI、Claude Code 或 AgentChat，也不会自动 commit / push。

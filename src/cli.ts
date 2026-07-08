@@ -3,9 +3,11 @@ import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
 import { exportTaskCommand } from './commands/export-task.js';
 import { gitCheckCommand } from './commands/git-check.js';
+import { importReviewCommand } from './commands/import-review.js';
 import { importResultCommand } from './commands/import-result.js';
 import { initCommand } from './commands/init.js';
 import { planCommand } from './commands/plan.js';
+import { showReviewCommand } from './commands/show-review.js';
 import { statusCommand } from './commands/status.js';
 import { validateCommand } from './commands/validate.js';
 import { verifyCommand } from './commands/verify.js';
@@ -52,6 +54,18 @@ export function createCli(): Command {
     .description('Import an ExecutionResult JSON file')
     .argument('<file>', 'ExecutionResult JSON file')
     .action(importResultCommand);
+
+  program
+    .command('import-review')
+    .description('Import a ReviewResult JSON file')
+    .argument('<file>', 'ReviewResult JSON file')
+    .action(importReviewCommand);
+
+  program
+    .command('show-review')
+    .description('Show the current ReviewResult for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(showReviewCommand);
 
   program
     .command('verify')

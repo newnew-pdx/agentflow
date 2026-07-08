@@ -3,13 +3,13 @@
   "stepId": "S001",
   "runId": "R001",
   "verdict": "changes_required",
-  "summary": "认证主流程正确，但用户上下文清理和密钥配置仍需修正。",
+  "summary": "JWT 认证主流程已经具备，但用户上下文清理和密钥配置仍需修正。",
   "findings": [
     {
       "severity": "high",
       "file": "src/main/java/com/example/context/UserContext.java",
       "problem": "请求结束时未清理 ThreadLocal，线程复用时可能泄漏用户上下文。",
-      "requiredFix": "在过滤器的 finally 块中清理用户上下文，并增加回归测试。"
+      "requiredFix": "在过滤器 finally 块中清理用户上下文，并增加回归测试。"
     },
     {
       "severity": "medium",
@@ -19,5 +19,5 @@
     }
   ],
   "suggestedNextAction": "fix",
-  "createdAt": "2026-07-06T13:00:00.000Z"
+  "createdAt": "2026-07-08T09:00:00.000Z"
 }

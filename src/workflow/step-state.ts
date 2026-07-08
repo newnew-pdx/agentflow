@@ -5,6 +5,10 @@ export const stepStatuses = [
   'RESULT_IMPORTED',
   'VERIFIED',
   'BLOCKED',
+  'REVIEW_APPROVED',
+  'CHANGES_REQUIRED',
+  'REPLAN_REQUIRED',
+  'REVIEW_REJECTED',
   'COMPLETED',
 ] as const;
 
@@ -14,6 +18,15 @@ export type StepExecutionSummary = {
   status: 'completed' | 'failed' | 'blocked';
   suggestedNextAction: 'review' | 'fix' | 'replan' | 'manual';
   filesChangedCount: number;
+};
+
+export type StepReviewSummary = {
+  verdict: 'approved' | 'changes_required' | 'replan_required' | 'rejected';
+  reviewedAt: string;
+  findingsCount: number;
+  highestSeverity: 'low' | 'medium' | 'high' | 'critical' | null;
+  suggestedNextAction: 'commit' | 'fix' | 'replan' | 'manual';
+  summary: string;
 };
 
 export type StepState = {
@@ -27,6 +40,7 @@ export type StepState = {
   exportedAt?: string;
   importedAt?: string;
   executionResult?: StepExecutionSummary;
+  review?: StepReviewSummary;
   verification?: {
     status: 'passed' | 'failed' | 'skipped';
     verifiedAt: string;

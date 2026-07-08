@@ -1,0 +1,23 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S001",
+  "runId": "R001",
+  "verdict": "changes_required",
+  "summary": "JWT 认证链路基本成型，但异常响应和用户上下文释放仍有风险，需要先修复再进入提交检查。",
+  "findings": [
+    {
+      "severity": "high",
+      "file": "src/main/java/com/example/security/JwtAuthenticationFilter.java",
+      "problem": "Token 过期或签名错误时异常可能继续向上抛出，调用方无法稳定收到 401 响应。",
+      "requiredFix": "在过滤器中捕获认证异常并统一返回 401，同时保留必要的审计日志。"
+    },
+    {
+      "severity": "medium",
+      "file": "src/main/java/com/example/context/UserContextHolder.java",
+      "problem": "用户上下文没有在请求结束后强制清理，线程复用时可能串入上一位用户信息。",
+      "requiredFix": "在 finally 块调用 clear，并增加并发请求下的上下文隔离测试。"
+    }
+  ],
+  "suggestedNextAction": "fix",
+  "createdAt": "2026-07-08T09:10:00.000Z"
+}
