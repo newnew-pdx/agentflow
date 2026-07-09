@@ -1,0 +1,8 @@
+# Example Windows executor config with inline args.
+executors:
+  codex:
+    command: "cmd.exe"
+    args: ["/d", "/s", "/c", "\"D:\\nodejs\\codex.cmd\" exec --sandbox read-only --color never -"]
+    timeoutMs: 60000
+    maxOutputChars: 50000
+    promptMode: "file-reference"

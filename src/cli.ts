@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
+import { checkExecutorCommand } from './commands/check-executor.js';
 import { checkpointCommand } from './commands/checkpoint.js';
 import { createFixCommand } from './commands/create-fix.js';
 import { createReplanCommand } from './commands/create-replan.js';
@@ -83,7 +84,14 @@ export function createCli(): Command {
     .description('Run a configured executor for the current Step run')
     .argument('<stepId>', 'Step ID, for example S001')
     .option('--executor <executor>', 'executor to run: dry-run, manual, codex', 'dry-run')
+    .option('--confirm', 'allow a real external executor to start')
     .action(runExecutorCommand);
+
+  program
+    .command('check-executor')
+    .description('Check executor configuration without running a task')
+    .argument('<executor>', 'executor to check: codex')
+    .action(checkExecutorCommand);
 
   program
     .command('import-result')

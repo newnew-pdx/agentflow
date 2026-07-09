@@ -76,6 +76,20 @@ export async function getNextAction(stepId: string): Promise<NextActionRecommend
     if (executorRunExists && !executionResultExists) {
       const executorRun = await readExecutorRun(executorRunPath);
       if (executorRun?.status === 'failed') {
+        if (executorRun.executor === 'codex') {
+          return recommend(
+            state,
+            [`npm run dev -- run-executor ${stepId} --executor manual`],
+            ['Codex executor 失败。请先查看 executor-output.md；如果本地 Codex CLI 不兼容 stdin，改用 manual executor。'],
+            [
+              `执行器：${executorRun.executor}`,
+              `失败状态：${executorRun.timedOut ? 'failed, timed out' : executorRun.status}`,
+              `输出文件：${toRelativePath(executorOutputPath)}`,
+              ...executorRun.warnings.map((warning) => `警告：${warning}`),
+            ],
+          );
+        }
+
         return recommend(
           state,
           [`npm run dev -- run-executor ${stepId} --executor manual`],
@@ -86,6 +100,15 @@ export async function getNextAction(stepId: string): Promise<NextActionRecommend
             `输出文件：${toRelativePath(executorOutputPath)}`,
             ...executorRun.warnings.map((warning) => `警告：${warning}`),
           ],
+        );
+      }
+
+      if (executorRun?.executor === 'codex' && executorRun.status === 'completed') {
+        return recommend(
+          state,
+          [`npm run dev -- import-candidate ${toRelativePath(executorOutputPath)}`],
+          ['Codex executor 已完成，但 AgentFlow 不会自动信任输出或导入结果。请只在 executor-output.md 包含有效 ExecutionResult JSON 时导入。'],
+          [`执行器输出：${toRelativePath(executorOutputPath)}`],
         );
       }
 
@@ -171,6 +194,7 @@ async function readExecutorRun(executorRunPath: string): Promise<
   | {
       executor: string;
       status: 'completed' | 'failed' | 'blocked';
+      timedOut?: boolean;
       warnings: string[];
     }
   | undefined
@@ -180,6 +204,7 @@ async function readExecutorRun(executorRunPath: string): Promise<
       executor?: unknown;
       status?: unknown;
       warnings?: unknown;
+      timedOut?: unknown;
     };
     if (
       typeof data.executor === 'string' &&
@@ -188,6 +213,7 @@ async function readExecutorRun(executorRunPath: string): Promise<
       return {
         executor: data.executor,
         status: data.status,
+        timedOut: typeof data.timedOut === 'boolean' ? data.timedOut : undefined,
         warnings: Array.isArray(data.warnings) ? data.warnings.filter((item): item is string => typeof item === 'string') : [],
       };
     }

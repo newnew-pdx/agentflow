@@ -10,6 +10,7 @@ export type ExecutorInput = {
   rawOutputPath: string;
   candidateOutputPath?: string;
   timeoutMs: number;
+  confirmed?: boolean;
 };
 
 export type ExecutorRunStatus = 'completed' | 'failed' | 'blocked';
@@ -24,6 +25,14 @@ export type ExecutorRunResult = {
   finishedAt: string;
   durationMs: number;
   warnings: string[];
+  confirmed?: boolean;
+  timedOut?: boolean;
+  truncated?: boolean;
+  command?: string;
+  args?: string[];
+  timeoutMs?: number;
+  promptMode?: string;
+  errorMessage?: string;
 };
 
 export interface Executor {

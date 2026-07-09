@@ -169,6 +169,16 @@ ${acceptanceCommands.join('\n')}
 
 ${renderFixContext(task.stepId, runId, fixContext)}
 
+## Windows Encoding Rule
+
+If you need to read text files on Windows, use UTF-8 explicitly:
+
+\`\`\`powershell
+Get-Content -Raw -Encoding UTF8 <path>
+\`\`\`
+
+Do not use plain \`Get-Content -Raw <path>\` for Chinese UTF-8 files, because Windows PowerShell may decode them incorrectly.
+
 ## Execution Rules
 
 1. 只完成当前 TaskPacket 的 scope。
