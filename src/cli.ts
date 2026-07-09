@@ -13,6 +13,7 @@ import { initCommand } from './commands/init.js';
 import { makeExecutePromptCommand } from './commands/make-execute-prompt.js';
 import { makePlanPromptCommand } from './commands/make-plan-prompt.js';
 import { makeReviewPromptCommand } from './commands/make-review-prompt.js';
+import { pilotReportCommand } from './commands/pilot-report.js';
 import { planCommand } from './commands/plan.js';
 import { showReviewCommand } from './commands/show-review.js';
 import { statusCommand } from './commands/status.js';
@@ -127,6 +128,12 @@ export function createCli(): Command {
     .description('Summarize readiness before a manual commit')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(checkpointCommand);
+
+  program
+    .command('pilot-report')
+    .description('Generate a readable pilot report for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(pilotReportCommand);
 
   program
     .command('build-context')

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathExists } from '../utils/fs.js';
 import { getAgentDirectory } from '../utils/path.js';
-import { getExecutionPromptPath, getExecutionResultPath, listStepRecords } from '../workflow/step-store.js';
+import { getExecutionPromptPath, getExecutionResultPath, getStepDirectory, listStepRecords } from '../workflow/step-store.js';
 
 export async function statusCommand(): Promise<void> {
   const root = getAgentDirectory();
@@ -69,5 +69,6 @@ export async function statusCommand(): Promise<void> {
     if (state.replanSourceRunId) {
       console.log(`  Replan: requested from ${state.replanSourceRunId}`);
     }
+    console.log(`  Pilot Report: ${(await pathExists(path.join(getStepDirectory(state.stepId), 'pilot-report.md'))) ? 'generated' : 'missing'}`);
   }
 }

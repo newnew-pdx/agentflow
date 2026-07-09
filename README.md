@@ -1,5 +1,23 @@
 # AgentFlow
 
+## Step11 更新：Pilot Report 与冗余审查
+
+当前版本新增 `pilot-report <stepId>`，用于复盘一次真实 Step 运行记录，生成面向人工阅读的试运行报告：
+
+```bash
+npm run dev -- pilot-report S001
+```
+
+命令会读取 `.agent/steps/<stepId>/state.json` 和该 Step 下所有 `runs/<runId>/` 目录，检查 `task.json`、`execution-request.md`、`tests.json`、`git.json`、`web-review-request.md`、`review.json`、`checkpoint-summary.md` 等产物是否存在，并生成：
+
+```text
+.agent/steps/S001/pilot-report.md
+```
+
+报告包含 Step Overview、Workflow Timeline、Artifact Inventory、Artifact Consumption Map、Framework Health Check、Manual Friction Points、Redundancy Candidates 和 Recommended Next Step。它不执行开发任务，不调用 Codex CLI / AgentChat / 网页 AI，不自动 commit 或 push，只用于判断 AgentFlow 外部框架是否真正串联起来，以及哪些产物可能只服务人工阅读而不参与核心状态流。
+
+`status` 现在会显示每个 Step 的 `Pilot Report: generated/missing`。详细说明见 [Step11 文档](docs/steps/step11-pilot-report.md)。
+
 ## Step9 更新：Manual Executor Prompt 与真实 Java 项目闭环准备
 
 当前版本新增 `make-execute-prompt <stepId>`，用于把当前 run 的 TaskPacket、上下文清单、验收命令和执行规则转换为标准执行提示词：

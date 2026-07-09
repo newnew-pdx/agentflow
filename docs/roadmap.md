@@ -118,3 +118,14 @@
 - 本阶段仍不自动 commit、不自动 push、不接入 Codex CLI / AgentChat / Claude Code，也不实现 SQLite 状态机或 PR 创建。
 
 详细说明见 [Step7：Checkpoint 辅助命令](steps/step7-checkpoint.md)。
+## Step11：Pilot Report 与冗余审查（已完成）
+
+- 新增 `pilot-report <stepId>`，读取 `.agent/steps/<stepId>/state.json` 和所有 run 目录，生成 `.agent/steps/<stepId>/pilot-report.md`。
+- 报告包含 Step Overview、Workflow Timeline、Artifact Inventory、Artifact Consumption Map、Framework Health Check、Manual Friction Points、Redundancy Candidates 和 Recommended Next Step。
+- Artifact Inventory 以固定文件清单检查每个 run 下的产物是否 `exists` / `missing`，不要求所有产物都存在。
+- Artifact Consumption Map 使用固定规则描述 `task.json`、`tests.json`、`git.json`、`review.json`、`fix-from-review.md` 等产物如何被后续命令消费。
+- Framework Health Check 基于 `state.json` 的 review / verification / gitCheck / checkpoint 摘要做轻量判断，用于确认真实试运行是否串联。
+- `status` 增加 `Pilot Report: generated/missing`。
+- 本阶段仍不接入 Codex CLI / AgentChat / 网页 AI，不自动生成业务代码，不自动 commit / push。
+
+详细说明见 [Step11：Pilot Report 与冗余审查](steps/step11-pilot-report.md)。
