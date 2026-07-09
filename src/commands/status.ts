@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathExists } from '../utils/fs.js';
 import { getAgentDirectory } from '../utils/path.js';
-import { getExecutionPromptPath, getExecutionResultPath, getStepDirectory, listStepRecords } from '../workflow/step-store.js';
+import { getExecutionPromptPath, getExecutionResultPath, getRunDirectory, getStepDirectory, listStepRecords } from '../workflow/step-store.js';
 
 export async function statusCommand(): Promise<void> {
   const root = getAgentDirectory();
@@ -35,6 +35,14 @@ export async function statusCommand(): Promise<void> {
         );
       } else {
         console.log(`  ExecutionResult: ${path.relative(process.cwd(), resultPath)}`);
+      }
+    }
+    const executorRunPath = path.join(getRunDirectory(state.stepId, state.currentRunId), 'executor-run.json');
+    if (await pathExists(executorRunPath)) {
+      if (state.executorRun) {
+        console.log(`  Executor: ${state.executorRun.executor}, ${state.executorRun.status}`);
+      } else {
+        console.log(`  Executor: ${path.relative(process.cwd(), executorRunPath)}`);
       }
     }
     if (state.verification) {

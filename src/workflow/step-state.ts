@@ -45,6 +45,15 @@ export type StepCheckpointSummary = {
   warnings: string[];
 };
 
+export type StepExecutorRunSummary = {
+  executor: string;
+  status: 'completed' | 'failed' | 'blocked';
+  runAt: string;
+  rawOutputPath: string;
+  exitCode?: number;
+  warnings: string[];
+};
+
 export type StepState = {
   stepId: string;
   status: StepStatus;
@@ -78,6 +87,7 @@ export type StepState = {
   replanRequestedAt?: string;
   replanSourceRunId?: string;
   checkpoint?: StepCheckpointSummary;
+  executorRun?: StepExecutorRunSummary;
 };
 
 export function isStepStatus(value: unknown): value is StepStatus {
