@@ -1,5 +1,28 @@
 # AgentFlow
 
+## Step13 更新：Executor Gateway 最小接入
+
+当前版本新增 `run-executor <stepId>`，让 AgentFlow 可以通过统一网关记录执行器调用结果，但仍保持人工可控：
+
+```bash
+npm run dev -- run-executor S001 --executor dry-run
+npm run dev -- run-executor S001 --executor manual
+npm run dev -- run-executor S001 --executor codex
+```
+
+`dry-run` 不调用外部命令，只生成 `executor-run.json` 和 `executor-output.md`，用于验证网关链路。`manual` 会读取当前 run 的 `execution-request.md`，生成一份可复制给 Cursor / Codex / Claude Code 的人工执行说明，并记录本次网关运行。`codex` 会读取 `.agent/config.yaml` 中的 `executors.codex` 配置，使用 `execution-request.md` 作为 stdin 调用本地 Codex CLI；如果命令不存在，会清晰提示如何配置。
+
+执行器输出会写入：
+
+```text
+.agent/steps/<stepId>/runs/<runId>/executor-run.json
+.agent/steps/<stepId>/runs/<runId>/executor-output.md
+```
+
+Executor 只负责执行和记录，不直接把 Step 推进到 completed。后续仍需通过 `import-candidate`、`verify`、`git-check`、`make-review-prompt`、`import-candidate` 和 `checkpoint` 推进。`status` 会显示 `Executor: <name>, <status>`，`next-action` 会在已导出且已有执行器输出时建议导入 candidate。
+
+详细说明见 [Step13 文档](docs/steps/step13-executor-gateway.md)。
+
 ## Step12 更新：Candidate Import 与 Next Action Assistant
 
 当前版本新增 `import-candidate <file>` 和 `next-action <stepId>`，用于降低真实手动链路的复制与判断成本。

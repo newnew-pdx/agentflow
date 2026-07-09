@@ -1,5 +1,18 @@
 # AgentFlow 路线图
 
+## Step13：Executor Gateway 最小接入（已完成）
+
+- 新增 `run-executor <stepId> --executor <dry-run|manual|codex>`，从当前 Step 的 `currentRunId` 定位 `task.json` 与 `execution-request.md`。
+- 新增 Executor 接口、DryRunExecutor、ManualExecutor、CodexCliExecutor 和 executor run 写入逻辑。
+- DryRunExecutor 不调用外部命令，只生成 `executor-run.json` 与 `executor-output.md`，用于验证网关链路。
+- ManualExecutor 读取 `execution-request.md`，生成人工复制给 Cursor / Codex / Claude Code 的执行说明，并统一记录 executor run。
+- CodexCliExecutor 支持从 `.agent/config.yaml` 读取 `executors.codex.command`、`args`、`timeoutMs`，用 `execution-request.md` 作为 stdin 调用本地命令；命令不可用时写入失败记录和配置提示。
+- `state.json` 新增 `executorRun` 摘要，但 executor completed 不会把 Step 主状态改为 `COMPLETED`。
+- `status` 展示当前 run 的 Executor 摘要；`next-action` 在已导出且已有 executor run 但没有 `execution-result.json` 时建议 `import-candidate executor-output.md`。
+- 本 Step 不自动调用 AgentChat、不自动调用网页 AI、不自动 review、不自动 commit、不自动 push，也不实现完整自动闭环。
+
+详细说明见 [Step13：Executor Gateway 最小接入](steps/step13-executor-gateway.md)。
+
 ## Step12：Candidate Import 与 Next Action Assistant（已完成）
 
 - 新增 `import-candidate <file>`，支持从纯 JSON、Markdown ```json 代码块和普通代码块中提取候选 JSON。

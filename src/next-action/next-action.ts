@@ -54,6 +54,9 @@ export async function getNextAction(stepId: string): Promise<NextActionRecommend
   }
 
   const executionResultExists = await pathExists(getExecutionResultPath(stepId, runId));
+  const executorRunPath = artifact('executor-run.json');
+  const executorRunExists = await pathExists(executorRunPath);
+  const executorOutputPath = artifact('executor-output.md');
   const testsExists = await pathExists(artifact('tests.json'));
   const gitExists = await pathExists(artifact('git.json'));
   const webReviewPromptExists = await pathExists(artifact('web-review-request.md'));
@@ -70,10 +73,34 @@ export async function getNextAction(stepId: string): Promise<NextActionRecommend
       );
     }
 
+    if (executorRunExists && !executionResultExists) {
+      const executorRun = await readExecutorRun(executorRunPath);
+      if (executorRun?.status === 'failed') {
+        return recommend(
+          state,
+          [`npm run dev -- run-executor ${stepId} --executor manual`],
+          ['executor-run.json 显示执行器失败，需要人工检查 executor-output.md 或改用 manual executor。'],
+          [
+            `执行器：${executorRun.executor}`,
+            `失败状态：${executorRun.status}`,
+            `输出文件：${toRelativePath(executorOutputPath)}`,
+            ...executorRun.warnings.map((warning) => `警告：${warning}`),
+          ],
+        );
+      }
+
+      return recommend(
+        state,
+        [`npm run dev -- import-candidate ${toRelativePath(executorOutputPath)}`],
+        ['executor-run.json 已存在，但 execution-result.json 尚未导入。请先导入 executor-output.md 中的候选结果。'],
+        [`执行器输出：${toRelativePath(executorOutputPath)}`],
+      );
+    }
+
     return recommend(
       state,
-      [`npm run dev -- import-candidate <executor-output.md>`],
-      ['execution-request.md 已存在，请把它交给 Codex/Cursor 执行，然后导入执行者返回的候选输出。'],
+      [`npm run dev -- run-executor ${stepId} --executor manual`, `npm run dev -- run-executor ${stepId} --executor dry-run`],
+      ['execution-request.md 已存在，可以通过 Executor Gateway 记录一次 manual 或 dry-run 执行。'],
       [`执行提示词：${toRelativePath(getExecutionPromptPath(stepId, runId))}`],
     );
   }
@@ -138,6 +165,36 @@ export async function getNextAction(stepId: string): Promise<NextActionRecommend
   }
 
   return recommend(state, [`npm run dev -- status`], ['当前状态没有命中更具体的规则，请先查看整体状态。']);
+}
+
+async function readExecutorRun(executorRunPath: string): Promise<
+  | {
+      executor: string;
+      status: 'completed' | 'failed' | 'blocked';
+      warnings: string[];
+    }
+  | undefined
+> {
+  try {
+    const data = JSON.parse(await readFile(executorRunPath, 'utf8')) as {
+      executor?: unknown;
+      status?: unknown;
+      warnings?: unknown;
+    };
+    if (
+      typeof data.executor === 'string' &&
+      (data.status === 'completed' || data.status === 'failed' || data.status === 'blocked')
+    ) {
+      return {
+        executor: data.executor,
+        status: data.status,
+        warnings: Array.isArray(data.warnings) ? data.warnings.filter((item): item is string => typeof item === 'string') : [],
+      };
+    }
+    return undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function recommend(

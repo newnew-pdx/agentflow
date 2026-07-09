@@ -17,6 +17,7 @@ import { makeReviewPromptCommand } from './commands/make-review-prompt.js';
 import { nextActionCommand } from './commands/next-action.js';
 import { pilotReportCommand } from './commands/pilot-report.js';
 import { planCommand } from './commands/plan.js';
+import { runExecutorCommand } from './commands/run-executor.js';
 import { showReviewCommand } from './commands/show-review.js';
 import { statusCommand } from './commands/status.js';
 import { validateCommand } from './commands/validate.js';
@@ -76,6 +77,13 @@ export function createCli(): Command {
     .description('Generate a manual executor prompt from the current TaskPacket')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(makeExecutePromptCommand);
+
+  program
+    .command('run-executor')
+    .description('Run a configured executor for the current Step run')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .option('--executor <executor>', 'executor to run: dry-run, manual, codex', 'dry-run')
+    .action(runExecutorCommand);
 
   program
     .command('import-result')
