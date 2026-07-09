@@ -1,4 +1,18 @@
 # AgentFlow 路线图
+
+## Step9：Manual Executor Prompt 与真实 Java 项目闭环准备（已完成）
+
+- 新增 `make-execute-prompt <stepId>`，根据当前 run 的 `task.json` 生成 `execution-request.md`。
+- 提示词包含执行器角色、Step/Run 信息、必读上下文、完整 TaskPacket、scope、outOfScope、constraints、acceptanceCommands、执行规则和 ExecutionResult JSON 输出格式。
+- 支持修复 run：当存在 `fix-from-review.md` 时增加 `Fix Context`，并关联上一轮 `review-summary.md` 与 `review.json`。
+- 缺失 context pack 会在 prompt 中标记为 `_Not found_`，命令本身不崩溃。
+- `status` 展示当前 run 的 `Execution Prompt: generated/missing`。
+- 新增 `examples/execution-result.manual-codex.example.json`，用于模拟手工 Codex 执行后返回的 ExecutionResult。
+- 新增真实 Java 微服务闭环试运行文档，说明 worktree 隔离、执行、审查、修复和 checkpoint 流程。
+- 本阶段仍不自动调用 Codex CLI、Claude Code、AgentChat 或网页 AI，不自动修改 Java 项目，不自动 commit / push。
+
+详细说明见 [Step9：Manual Executor Prompt 与真实 Java 项目闭环准备](steps/step9-manual-executor-prompt.md) 和 [Java 微服务项目闭环试运行](pilots/java-microservice-pilot.md)。
+
 ## Step5：ReviewResult 导入与审查流（已完成）
 
 - 新增 `import-review <file>`，读取并校验结构化 ReviewResult JSON。
@@ -26,6 +40,16 @@
 详细说明见 [Step4：验证器与 Git 证据](steps/step4-verifier-git-evidence.md)。
 
 路线图用于说明实现顺序，不代表所列能力已经完成。
+
+## Step8: Web Plan Import 与 Web AI Prompt Builder（已完成）
+
+- 新增 `make-plan-prompt <goal>`，自动刷新 context pack，并生成 `.agent/generated/web-plan-request.md`。
+- 新增 `import-web-plan <file>`，支持 Markdown JSON 代码块和基础 Markdown-only 解析，导入后生成 `TaskPacket`、`spec.md`、`plan.md`、`acceptance.md`、`state.json` 和 `web-plan-source.md`。
+- 新增 `make-review-prompt <stepId>`，把当前 run 的 task、tests、Git evidence、diff、execution-result、checkpoint-summary 汇总成 `web-review-request.md`。
+- Web AI 只负责规划和审查建议；AgentFlow 负责补齐 `protocolVersion`、`stepId`、`runId`、`createdAt`，并通过 Zod 校验后写入 `.agent/steps`。
+- 本 Step 不自动调用 AgentChat、不自动调用网页 AI、不自动执行 Codex、不自动 commit / push。
+
+详细说明见 [Step8: Web Plan Import 与 Web AI Prompt Builder](steps/step8-web-plan-prompt-builder.md) 和 [Web AI Gateway 设计](design/web-ai-gateway.md)。
 
 ## Step0：CLI 项目骨架（已完成）
 

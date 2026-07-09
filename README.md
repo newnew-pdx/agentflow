@@ -1,4 +1,40 @@
 # AgentFlow
+
+## Step9 更新：Manual Executor Prompt 与真实 Java 项目闭环准备
+
+当前版本新增 `make-execute-prompt <stepId>`，用于把当前 run 的 TaskPacket、上下文清单、验收命令和执行规则转换为标准执行提示词：
+
+```bash
+npm run dev -- make-execute-prompt S001
+```
+
+命令会生成：
+
+```text
+.agent/steps/S001/runs/R001/execution-request.md
+```
+
+如果当前 run 是修复 run，例如 `R002` 且存在 `fix-from-review.md`，提示词会加入 `Fix Context`，要求执行器只修复上一轮 review findings，不扩大原始 Step 范围。`status` 现在会展示当前 run 的 `Execution Prompt: generated/missing`。
+
+`make-execute-prompt` 不执行代码、不调用 Codex CLI、不调用 Claude Code、不修改业务项目、不自动 commit 或 push。它和 `export-task` 的区别是：`export-task` 负责状态流转和 TaskPacket 导出，`make-execute-prompt` 负责生成可复制给 Cursor / Codex / Claude Code 的执行说明。
+
+详细说明见 [Step9 文档](docs/steps/step9-manual-executor-prompt.md) 和 [Java 微服务闭环试运行](docs/pilots/java-microservice-pilot.md)。
+
+## Step8 更新：Web Plan Import 与 Web AI Prompt Builder
+
+当前版本新增三条面向网页 AI / AgentChat skill 的桥接命令，但仍不自动调用网页 AI、不自动调用 AgentChat、不自动调用 Codex、不自动 commit 或 push。
+
+常用命令：
+
+```bash
+npm run dev -- make-plan-prompt "为 Java 微服务项目增加 JWT 认证"
+npm run dev -- import-web-plan examples/web-plan.example.md
+npm run dev -- make-review-prompt S001
+```
+
+`make-plan-prompt` 会刷新 context pack，并生成 `.agent/generated/web-plan-request.md`，用于复制给网页 AI 生成结构化 Web Plan。`import-web-plan` 会从 Markdown JSON 代码块或基础 Markdown 标题中提取 TaskPacket JSON Candidate，由 AgentFlow 补齐 `protocolVersion`、`stepId`、`runId`、`createdAt` 并使用现有 TaskPacket schema 校验，成功后写入 `.agent/steps/<stepId>/runs/<runId>/task.json` 和 `web-plan-source.md`。`make-review-prompt` 会读取当前 run 的 `task.json`、`tests.json`、`git.json`、`git-diff.patch`、`execution-result.json`、`checkpoint-summary.md`，生成 `.agent/steps/<stepId>/runs/<runId>/web-review-request.md`，缺失证据会标记为 `_Not found_`。
+
+核心边界：Web AI 负责规划和审查建议；Executor 负责执行；AgentFlow 负责补齐、校验、记录和控制状态。详细说明见 [Step8 文档](docs/steps/step8-web-plan-prompt-builder.md) 与 [Web AI Gateway 设计](docs/design/web-ai-gateway.md)。
 ## Step7 更新：Checkpoint 辅助命令
 
 当前版本新增 `checkpoint <stepId>`，用于在人工提交前汇总当前 Run 的验证、Git 证据和 Review 结果，并生成可读的 checkpoint 摘要与 commit message 建议。本步骤仍不接入 Codex CLI、Claude Code、AgentChat，不自动调用网页 AI，不自动 commit，也不自动 push。

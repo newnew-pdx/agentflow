@@ -8,7 +8,11 @@ import { exportTaskCommand } from './commands/export-task.js';
 import { gitCheckCommand } from './commands/git-check.js';
 import { importReviewCommand } from './commands/import-review.js';
 import { importResultCommand } from './commands/import-result.js';
+import { importWebPlanCommand } from './commands/import-web-plan.js';
 import { initCommand } from './commands/init.js';
+import { makeExecutePromptCommand } from './commands/make-execute-prompt.js';
+import { makePlanPromptCommand } from './commands/make-plan-prompt.js';
+import { makeReviewPromptCommand } from './commands/make-review-prompt.js';
 import { planCommand } from './commands/plan.js';
 import { showReviewCommand } from './commands/show-review.js';
 import { statusCommand } from './commands/status.js';
@@ -41,6 +45,18 @@ export function createCli(): Command {
     .action(planCommand);
 
   program
+    .command('make-plan-prompt')
+    .description('Generate a Web AI planning prompt')
+    .argument('<goal>', 'goal to plan with Web AI')
+    .action(makePlanPromptCommand);
+
+  program
+    .command('import-web-plan')
+    .description('Import a Web AI plan as a draft TaskPacket')
+    .argument('<file>', 'Web Plan markdown file')
+    .action(importWebPlanCommand);
+
+  program
     .command('approve')
     .description('Approve a planned Step')
     .argument('<stepId>', 'Step ID, for example S001')
@@ -51,6 +67,12 @@ export function createCli(): Command {
     .description('Export the current TaskPacket for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(exportTaskCommand);
+
+  program
+    .command('make-execute-prompt')
+    .description('Generate a manual executor prompt from the current TaskPacket')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(makeExecutePromptCommand);
 
   program
     .command('import-result')
@@ -69,6 +91,12 @@ export function createCli(): Command {
     .description('Show the current ReviewResult for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(showReviewCommand);
+
+  program
+    .command('make-review-prompt')
+    .description('Generate a Web AI review prompt from current Step evidence')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(makeReviewPromptCommand);
 
   program
     .command('create-fix')

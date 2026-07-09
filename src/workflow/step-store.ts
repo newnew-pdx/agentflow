@@ -29,6 +29,10 @@ export function getExecutionResultPath(stepId: string, runId: string): string {
   return path.join(getRunDirectory(stepId, runId), 'execution-result.json');
 }
 
+export function getExecutionPromptPath(stepId: string, runId: string): string {
+  return path.join(getRunDirectory(stepId, runId), 'execution-request.md');
+}
+
 export async function assertInitialized(): Promise<boolean> {
   return pathExists(getAgentDirectory());
 }

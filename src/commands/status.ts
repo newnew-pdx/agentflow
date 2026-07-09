@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathExists } from '../utils/fs.js';
 import { getAgentDirectory } from '../utils/path.js';
-import { getExecutionResultPath, listStepRecords } from '../workflow/step-store.js';
+import { getExecutionPromptPath, getExecutionResultPath, listStepRecords } from '../workflow/step-store.js';
 
 export async function statusCommand(): Promise<void> {
   const root = getAgentDirectory();
@@ -25,6 +25,8 @@ export async function statusCommand(): Promise<void> {
   for (const { state } of steps) {
     console.log(`- ${state.stepId} | ${state.status} | ${state.goal} | Run: ${state.currentRunId} | Updated: ${state.updatedAt}`);
     const resultPath = getExecutionResultPath(state.stepId, state.currentRunId);
+    const promptPath = getExecutionPromptPath(state.stepId, state.currentRunId);
+    console.log(`  Execution Prompt: ${(await pathExists(promptPath)) ? 'generated' : 'missing'}`);
     if (await pathExists(resultPath)) {
       const summary = state.executionResult;
       if (summary) {
