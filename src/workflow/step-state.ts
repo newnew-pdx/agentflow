@@ -13,6 +13,8 @@ export const stepStatuses = [
   'FIX_APPROVED',
   'FIX_EXPORTED',
   'REPLAN_DRAFT',
+  'CHECKPOINT_READY',
+  'CHECKPOINT_BLOCKED',
   'COMPLETED',
 ] as const;
 
@@ -31,6 +33,16 @@ export type StepReviewSummary = {
   highestSeverity: 'low' | 'medium' | 'high' | 'critical' | null;
   suggestedNextAction: 'commit' | 'fix' | 'replan' | 'manual';
   summary: string;
+};
+
+export type StepCheckpointSummary = {
+  status: 'ready' | 'blocked' | 'warning';
+  checkedAt: string;
+  runId: string;
+  summaryPath: string;
+  commitMessagePath: string;
+  blockingReasons: string[];
+  warnings: string[];
 };
 
 export type StepState = {
@@ -65,6 +77,7 @@ export type StepState = {
   fixFindingsCount?: number;
   replanRequestedAt?: string;
   replanSourceRunId?: string;
+  checkpoint?: StepCheckpointSummary;
 };
 
 export function isStepStatus(value: unknown): value is StepStatus {

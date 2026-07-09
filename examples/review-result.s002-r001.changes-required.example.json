@@ -1,0 +1,17 @@
+{
+  "protocolVersion": "agentflow.v1",
+  "stepId": "S002",
+  "runId": "R001",
+  "verdict": "changes_required",
+  "summary": "The implementation is close, but the checkpoint still needs a manual fix before commit.",
+  "findings": [
+    {
+      "severity": "high",
+      "file": "src/example.ts",
+      "problem": "The review found a blocking behavior issue that must be fixed before checkpoint can be ready.",
+      "requiredFix": "Fix the behavior, rerun verification, and import a new approved review result."
+    }
+  ],
+  "suggestedNextAction": "fix",
+  "createdAt": "2026-07-08T09:30:00.000Z"
+}

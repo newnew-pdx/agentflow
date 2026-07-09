@@ -83,3 +83,14 @@
 - 本阶段仍不自动调用 Codex CLI / AgentChat / Claude Code，不自动生成业务代码，不自动 commit / push。
 
 详细说明见 [Step6：Fix / Replan Packet 生成](steps/step6-fix-replan-packet.md)。
+## Step7：Checkpoint 辅助命令（已完成）
+
+- 新增 `checkpoint <stepId>`，读取当前 Run 的 `task.json`、`tests.json`、`git.json`、`review.json` 和 `review-summary.md`。
+- 生成 `.agent/steps/<stepId>/runs/<runId>/checkpoint-summary.md`，汇总目标、验证、Review、Git 证据、安全检查、缺失项、阻塞原因和下一步人工命令。
+- 生成 `.agent/steps/<stepId>/runs/<runId>/commit-message.txt`，提供稳定、可复制的 commit message 建议。
+- 在 `.agent/steps/<stepId>/state.json` 中新增 `checkpoint` 字段，并扩展 `CHECKPOINT_READY`、`CHECKPOINT_BLOCKED` 状态。
+- `status` 会展示 checkpoint 状态；ready/warning 显示 summary 路径，blocked 显示阻塞原因数量。
+- 复用 Step4 敏感文件规则：`.env`、`.env.*`、`*.pem`、`*.key`、`*.p12`、`*.jks`、`id_rsa`、`id_ed25519` 一旦出现在 Git 证据中，checkpoint 必须 blocked。
+- 本阶段仍不自动 commit、不自动 push、不接入 Codex CLI / AgentChat / Claude Code，也不实现 SQLite 状态机或 PR 创建。
+
+详细说明见 [Step7：Checkpoint 辅助命令](steps/step7-checkpoint.md)。

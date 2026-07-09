@@ -1,4 +1,29 @@
 # AgentFlow
+## Step7 更新：Checkpoint 辅助命令
+
+当前版本新增 `checkpoint <stepId>`，用于在人工提交前汇总当前 Run 的验证、Git 证据和 Review 结果，并生成可读的 checkpoint 摘要与 commit message 建议。本步骤仍不接入 Codex CLI、Claude Code、AgentChat，不自动调用网页 AI，不自动 commit，也不自动 push。
+
+常用命令：
+```bash
+npm run dev -- verify S001
+npm run dev -- git-check S001
+npm run dev -- import-review examples/review-result.s001-r001.approved.example.json
+npm run dev -- checkpoint S001
+npm run dev -- status
+```
+
+`checkpoint S001` 会读取 `.agent/steps/S001/state.json` 中的 `currentRunId`，聚合对应 Run 目录下的 `task.json`、`tests.json`、`git.json`、`review.json` 和 `review-summary.md`。缺失的非入口文件不会让命令崩溃，而是写入摘要的 missing item 与阻塞/警告原因。
+
+命令会生成：
+```text
+.agent/steps/S001/runs/R001/checkpoint-summary.md
+.agent/steps/S001/runs/R001/commit-message.txt
+```
+
+`state.json` 会新增 `checkpoint` 摘要字段，记录 `status`、`checkedAt`、`runId`、`summaryPath`、`commitMessagePath`、`blockingReasons` 和 `warnings`。`status` 命令会展示 checkpoint 状态；ready 时展示 summary 路径，blocked 时展示阻塞原因数量。
+
+完整说明见 [Step7：Checkpoint 辅助命令](docs/steps/step7-checkpoint.md)。
+
 ## Step6 更新：Fix / Replan Packet 生成
 
 当前版本新增 `create-fix <stepId>` 和 `create-replan <stepId>`。它们根据当前 Run 的 ReviewResult 生成下一轮修复任务或重新规划请求，但仍不接入 Codex CLI、Claude Code、AgentChat，不自动调用网页 AI，不自动生成业务代码，不自动 commit，也不自动 push。

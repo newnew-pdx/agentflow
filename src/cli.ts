@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { approveCommand } from './commands/approve.js';
 import { buildContextCommand } from './commands/build-context.js';
+import { checkpointCommand } from './commands/checkpoint.js';
 import { createFixCommand } from './commands/create-fix.js';
 import { createReplanCommand } from './commands/create-replan.js';
 import { exportTaskCommand } from './commands/export-task.js';
@@ -92,6 +93,12 @@ export function createCli(): Command {
     .description('Collect Git evidence for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(gitCheckCommand);
+
+  program
+    .command('checkpoint')
+    .description('Summarize readiness before a manual commit')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(checkpointCommand);
 
   program
     .command('build-context')

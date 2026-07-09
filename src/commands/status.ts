@@ -53,6 +53,13 @@ export async function statusCommand(): Promise<void> {
         `  Review: ${state.review.verdict}, findings: ${state.review.findingsCount}, highest: ${highest}, next: ${state.review.suggestedNextAction}`,
       );
     }
+    if (state.checkpoint) {
+      if (state.checkpoint.status === 'blocked') {
+        console.log(`  Checkpoint: blocked, reasons: ${state.checkpoint.blockingReasons.length}`);
+      } else {
+        console.log(`  Checkpoint: ${state.checkpoint.status}, summary: ${state.checkpoint.summaryPath}`);
+      }
+    }
     if (state.fixSourceRunId) {
       const findings = state.fixFindingsCount ?? 0;
       console.log(`  Fix: source ${state.fixSourceRunId} -> current ${state.currentRunId}, findings: ${findings}`);
