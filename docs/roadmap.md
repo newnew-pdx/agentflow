@@ -1,5 +1,18 @@
 # AgentFlow 路线图
 
+## Step12：Candidate Import 与 Next Action Assistant（已完成）
+
+- 新增 `import-candidate <file>`，支持从纯 JSON、Markdown ```json 代码块和普通代码块中提取候选 JSON。
+- 自动识别 ExecutionResult / ReviewResult / TaskPacket candidate；ExecutionResult 与 ReviewResult 会使用现有 Zod schema 校验，并复用现有导入保存逻辑。
+- ExecutionResult candidate 会写入 `.agent/steps/<stepId>/runs/<runId>/execution-result.json` 并更新 state 执行摘要。
+- ReviewResult candidate 会写入 `.agent/steps/<stepId>/runs/<runId>/review.json`，生成 `review-summary.md`，并根据 verdict 更新 Step 状态。
+- TaskPacket candidate 当前只提示使用 `import-web-plan` 或等待后续 task candidate import，不直接写入状态。
+- 新增 `next-action <stepId>`，只读取 `state.json` 和当前 run 产物，按固定规则推荐下一条人工命令，不执行推荐命令，也不修改状态。
+- 新增 `examples/execution-result.candidate.md`、`examples/review-result.candidate.md` 和 `examples/invalid-candidate.md` 用于验证成功与失败路径。
+- 本 Step 仍不自动调用 Codex CLI / AgentChat / 网页 AI，不自动修复严重损坏的 JSON，不自动 commit / push。
+
+详细说明见 [Step12：Candidate Import 与 Next Action Assistant](steps/step12-candidate-import-next-action.md)。
+
 ## Step9：Manual Executor Prompt 与真实 Java 项目闭环准备（已完成）
 
 - 新增 `make-execute-prompt <stepId>`，根据当前 run 的 `task.json` 生成 `execution-request.md`。

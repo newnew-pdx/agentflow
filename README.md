@@ -1,5 +1,19 @@
 # AgentFlow
 
+## Step12 更新：Candidate Import 与 Next Action Assistant
+
+当前版本新增 `import-candidate <file>` 和 `next-action <stepId>`，用于降低真实手动链路的复制与判断成本。
+
+```bash
+npm run dev -- import-candidate examples/execution-result.candidate.md
+npm run dev -- import-candidate examples/review-result.candidate.md
+npm run dev -- next-action S001
+```
+
+`import-candidate` 可以读取纯 JSON，也可以从 Markdown 的 ```json 代码块或普通代码块中提取 JSON。它会自动识别 ExecutionResult / ReviewResult / TaskPacket candidate；其中 ExecutionResult 和 ReviewResult 会复用现有 schema 与导入逻辑，写入当前 `.agent/steps/<stepId>/runs/<runId>/` 产物并更新 `state.json`。TaskPacket candidate 当前只提示继续使用 `import-web-plan`，不会直接写入状态。
+
+`next-action` 只读取 `state.json` 与当前 run 产物，按固定规则建议下一条命令，不会执行推荐命令，也不会修改状态。详细说明见 [Step12 文档](docs/steps/step12-candidate-import-next-action.md)。
+
 ## Step11 更新：Pilot Report 与冗余审查
 
 当前版本新增 `pilot-report <stepId>`，用于复盘一次真实 Step 运行记录，生成面向人工阅读的试运行报告：

@@ -6,6 +6,7 @@ import { createFixCommand } from './commands/create-fix.js';
 import { createReplanCommand } from './commands/create-replan.js';
 import { exportTaskCommand } from './commands/export-task.js';
 import { gitCheckCommand } from './commands/git-check.js';
+import { importCandidateCommand } from './commands/import-candidate.js';
 import { importReviewCommand } from './commands/import-review.js';
 import { importResultCommand } from './commands/import-result.js';
 import { importWebPlanCommand } from './commands/import-web-plan.js';
@@ -13,6 +14,7 @@ import { initCommand } from './commands/init.js';
 import { makeExecutePromptCommand } from './commands/make-execute-prompt.js';
 import { makePlanPromptCommand } from './commands/make-plan-prompt.js';
 import { makeReviewPromptCommand } from './commands/make-review-prompt.js';
+import { nextActionCommand } from './commands/next-action.js';
 import { pilotReportCommand } from './commands/pilot-report.js';
 import { planCommand } from './commands/plan.js';
 import { showReviewCommand } from './commands/show-review.js';
@@ -88,6 +90,12 @@ export function createCli(): Command {
     .action(importReviewCommand);
 
   program
+    .command('import-candidate')
+    .description('Import an AgentFlow protocol candidate from raw AI output')
+    .argument('<file>', 'Candidate markdown or JSON file')
+    .action(importCandidateCommand);
+
+  program
     .command('show-review')
     .description('Show the current ReviewResult for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
@@ -134,6 +142,12 @@ export function createCli(): Command {
     .description('Generate a readable pilot report for a Step')
     .argument('<stepId>', 'Step ID, for example S001')
     .action(pilotReportCommand);
+
+  program
+    .command('next-action')
+    .description('Recommend the next manual AgentFlow command for a Step')
+    .argument('<stepId>', 'Step ID, for example S001')
+    .action(nextActionCommand);
 
   program
     .command('build-context')
