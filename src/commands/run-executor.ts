@@ -19,6 +19,7 @@ import {
 
 export type RunExecutorOptions = {
   executor?: ExecutorName;
+  confirm?: boolean;
 };
 
 export async function runExecutorCommand(stepId: string, options: RunExecutorOptions = {}): Promise<void> {
@@ -39,6 +40,15 @@ export async function runExecutorCommand(stepId: string, options: RunExecutorOpt
   if (!isExecutorName(executorName)) {
     console.error(`Unknown executor: ${executorName}`);
     console.error('Supported executors: dry-run, manual, codex');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (executorName === 'codex' && options.confirm !== true) {
+    console.error('Codex executor requires explicit confirmation.');
+    console.error();
+    console.error('Run:');
+    console.error(`npm run dev -- run-executor ${stepId} --executor codex --confirm`);
     process.exitCode = 1;
     return;
   }
@@ -74,6 +84,7 @@ export async function runExecutorCommand(stepId: string, options: RunExecutorOpt
     rawOutputPath: path.join(runDir, 'executor-output.md'),
     candidateOutputPath: path.join(runDir, 'execution-result.candidate.md'),
     timeoutMs,
+    confirmed: executorName === 'codex' ? options.confirm === true : undefined,
   };
 
   const executor = createExecutor(executorName, config);

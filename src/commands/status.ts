@@ -40,7 +40,18 @@ export async function statusCommand(): Promise<void> {
     const executorRunPath = path.join(getRunDirectory(state.stepId, state.currentRunId), 'executor-run.json');
     if (await pathExists(executorRunPath)) {
       if (state.executorRun) {
-        console.log(`  Executor: ${state.executorRun.executor}, ${state.executorRun.status}`);
+        if (state.executorRun.executor === 'codex') {
+          const detail = state.executorRun.timedOut
+            ? 'timed out'
+            : state.executorRun.exitCode !== undefined
+              ? `exitCode: ${state.executorRun.exitCode}`
+              : undefined;
+          console.log(
+            `  Executor: codex, ${state.executorRun.status}${detail ? `, ${detail}` : ''}`,
+          );
+        } else {
+          console.log(`  Executor: ${state.executorRun.executor}, ${state.executorRun.status}`);
+        }
       } else {
         console.log(`  Executor: ${path.relative(process.cwd(), executorRunPath)}`);
       }

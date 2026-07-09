@@ -9,6 +9,14 @@ export type ExecutorRunRecord = {
   executor: string;
   status: ExecutorRunResult['status'];
   exitCode?: number;
+  confirmed?: boolean;
+  timedOut?: boolean;
+  truncated?: boolean;
+  command?: string;
+  args?: string[];
+  timeoutMs?: number;
+  promptMode?: string;
+  errorMessage?: string;
   startedAt: string;
   finishedAt: string;
   durationMs: number;
@@ -34,6 +42,14 @@ export async function writeExecutorRunRecord(input: ExecutorInput, result: Execu
     executor: result.executor,
     status: result.status,
     exitCode: result.exitCode,
+    confirmed: result.confirmed,
+    timedOut: result.timedOut,
+    truncated: result.truncated,
+    command: result.command,
+    args: result.args,
+    timeoutMs: result.timeoutMs,
+    promptMode: result.promptMode,
+    errorMessage: result.errorMessage,
     startedAt: result.startedAt,
     finishedAt: result.finishedAt,
     durationMs: result.durationMs,
@@ -62,6 +78,7 @@ export async function updateStateWithExecutorRun(state: StepState, record: Execu
       runAt: record.finishedAt,
       rawOutputPath: record.output.rawOutputPath,
       exitCode: record.exitCode,
+      timedOut: record.timedOut,
       warnings: record.warnings,
     },
   };
@@ -78,6 +95,14 @@ export function createTimedResult(input: {
   candidateOutputPath?: string;
   startedAt: Date;
   warnings?: string[];
+  confirmed?: boolean;
+  timedOut?: boolean;
+  truncated?: boolean;
+  command?: string;
+  args?: string[];
+  timeoutMs?: number;
+  promptMode?: string;
+  errorMessage?: string;
 }): ExecutorRunResult {
   const finishedAt = new Date();
   return {
@@ -90,6 +115,14 @@ export function createTimedResult(input: {
     finishedAt: finishedAt.toISOString(),
     durationMs: finishedAt.getTime() - input.startedAt.getTime(),
     warnings: input.warnings ?? [],
+    confirmed: input.confirmed,
+    timedOut: input.timedOut,
+    truncated: input.truncated,
+    command: input.command,
+    args: input.args,
+    timeoutMs: input.timeoutMs,
+    promptMode: input.promptMode,
+    errorMessage: input.errorMessage,
   };
 }
 

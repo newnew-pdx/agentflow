@@ -1,5 +1,20 @@
 # AgentFlow 路线图
 
+## Step14：Codex Executor Safe Pilot（已完成）
+
+- 新增 `check-executor codex`，只检查 `.agent/config.yaml` 中的 Codex executor 配置和命令可发现性，不执行任务。
+- `run-executor <stepId> --executor codex` 必须显式追加 `--confirm` 才会启动外部 Codex CLI；未确认时直接拒绝，并且不写 executor run 产物。
+- CodexCliExecutor 使用 `execution-request.md` 作为 stdin，支持 `timeoutMs`、stdout/stderr 捕获、exitCode、spawn error、超时 kill 和输出截断。
+- `executor-run.json` 增加 `confirmed`、`timedOut`、`truncated`、`command`、`args`、`timeoutMs`、`errorMessage` 等字段。
+- `executor-output.md` 统一记录 Executor、Stdout、Stderr 和 Notes，并明确说明输出未被信任，只有包含有效 ExecutionResult JSON 时才应 import-candidate。
+- `next-action` 针对 codex completed 建议人工 `import-candidate`，针对 failed 建议查看输出并 fallback 到 manual executor。
+- `status` 针对 codex 显示 `Executor: codex, completed, exitCode: 0` 或 timeout 摘要。
+- Windows 下推荐使用 `cmd.exe /d /s /c "...codex.cmd exec ... -"` 与 `promptMode=file-reference`，避免 `powershell.exe -File codex.ps1` 的中文 UTF-8 乱码，也避免 Node 直接 spawn `.cmd` 时出现 `spawn EINVAL`。
+- `make-execute-prompt` 生成的 `execution-request.md` 增加 Windows UTF-8 文件读取规则，要求读取中文文本时使用 `Get-Content -Raw -Encoding UTF8 <path>`。
+- 本 Step 仍不自动 import-candidate、不自动 verify/git-check/review、不自动 commit/push，也不完整适配所有 Codex CLI 参数。
+
+详细说明见 [Step14：Codex Executor Safe Pilot](steps/step14-codex-executor-safe-pilot.md)。
+
 ## Step13：Executor Gateway 最小接入（已完成）
 
 - 新增 `run-executor <stepId> --executor <dry-run|manual|codex>`，从当前 Step 的 `currentRunId` 定位 `task.json` 与 `execution-request.md`。

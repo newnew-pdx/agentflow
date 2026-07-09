@@ -1,5 +1,25 @@
 # AgentFlow
 
+## Step14 更新：Codex Executor Safe Pilot
+
+当前版本新增 `check-executor codex`，并为真实 Codex executor 增加显式确认、安全记录、超时和输出截断：
+
+```bash
+npm run dev -- check-executor codex
+npm run dev -- run-executor S001 --executor codex
+npm run dev -- run-executor S001 --executor codex --confirm
+```
+
+`check-executor codex` 只读取 `.agent/config.yaml`，检查 `executors.codex.command` 是否能被系统找到，不执行任务。若没有配置，会使用默认值：`command: codex`、`args: []`、`timeoutMs: 600000`、`maxOutputChars: 50000`。
+
+`run-executor S001 --executor codex` 默认会拒绝启动外部 Codex CLI，并提示必须追加 `--confirm`。未确认时不会写 `executor-run.json`，避免误解为已经执行。只有显式运行 `--confirm` 时，AgentFlow 才会把 `execution-request.md` 写入 Codex CLI 的 stdin，并记录 `executor-run.json` 与 `executor-output.md`。
+
+Codex executor 的记录会包含 `confirmed`、`timedOut`、`truncated`、`command`、`args`、`timeoutMs`、`errorMessage` 等字段；输出文件包含 Executor、Stdout、Stderr 和 Notes。AgentFlow 不会自动信任 Codex 输出，不会自动 `import-candidate`，也不会自动 `verify`、`git-check`、review、commit 或 push。
+
+Windows 下推荐使用 `cmd.exe /d /s /c "...codex.cmd exec ... -"` 并配置 `promptMode: "file-reference"`。不推荐 `powershell.exe -File codex.ps1`，也不推荐 Node 直接 spawn `.cmd` 文件：前者容易让中文 UTF-8 prompt 或文件内容出现 `????`、`æ›´æ–°` 这类乱码，后者在 Windows 上可能触发 `spawn EINVAL`。`file-reference` 模式只把英文 wrapper prompt 送入 stdin，完整中文 `execution-request.md` 由 Codex 自己按 UTF-8 从磁盘读取。`make-execute-prompt` 生成的 `execution-request.md` 已加入 Windows UTF-8 读取规则，提示执行器读取文本文件时使用 `Get-Content -Raw -Encoding UTF8 <path>`。
+
+详细说明见 [Step14 文档](docs/steps/step14-codex-executor-safe-pilot.md)。
+
 ## Step13 更新：Executor Gateway 最小接入
 
 当前版本新增 `run-executor <stepId>`，让 AgentFlow 可以通过统一网关记录执行器调用结果，但仍保持人工可控：

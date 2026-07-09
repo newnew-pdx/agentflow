@@ -51,6 +51,7 @@ export type StepExecutorRunSummary = {
   runAt: string;
   rawOutputPath: string;
   exitCode?: number;
+  timedOut?: boolean;
   warnings: string[];
 };
 
