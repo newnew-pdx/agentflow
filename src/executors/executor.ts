@@ -1,4 +1,5 @@
 export type ExecutorName = 'dry-run' | 'manual' | 'codex';
+export type CodexSandboxMode = 'read-only' | 'workspace-write';
 
 export type ExecutorInput = {
   stepId: string;
@@ -11,6 +12,7 @@ export type ExecutorInput = {
   candidateOutputPath?: string;
   timeoutMs: number;
   confirmed?: boolean;
+  sandboxOverride?: CodexSandboxMode;
 };
 
 export type ExecutorRunStatus = 'completed' | 'failed' | 'blocked';
@@ -32,6 +34,8 @@ export type ExecutorRunResult = {
   args?: string[];
   timeoutMs?: number;
   promptMode?: string;
+  sandboxOverride?: CodexSandboxMode;
+  effectiveSandbox?: CodexSandboxMode | null;
   errorMessage?: string;
 };
 

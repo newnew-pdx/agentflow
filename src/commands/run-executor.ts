@@ -8,7 +8,7 @@ import {
   updateStateWithExecutorRun,
   writeExecutorRunRecord,
 } from '../executors/executor-run-store.js';
-import type { Executor, ExecutorInput, ExecutorName } from '../executors/executor.js';
+import type { CodexSandboxMode, Executor, ExecutorInput, ExecutorName } from '../executors/executor.js';
 import {
   assertInitialized,
   getExecutionPromptPath,
@@ -20,6 +20,7 @@ import {
 export type RunExecutorOptions = {
   executor?: ExecutorName;
   confirm?: boolean;
+  sandbox?: string;
 };
 
 export async function runExecutorCommand(stepId: string, options: RunExecutorOptions = {}): Promise<void> {
@@ -40,6 +41,21 @@ export async function runExecutorCommand(stepId: string, options: RunExecutorOpt
   if (!isExecutorName(executorName)) {
     console.error(`Unknown executor: ${executorName}`);
     console.error('Supported executors: dry-run, manual, codex');
+    process.exitCode = 1;
+    return;
+  }
+
+  const sandboxOverride = options.sandbox === undefined ? undefined : parseSandboxOverride(options.sandbox);
+  if (options.sandbox !== undefined && sandboxOverride === undefined) {
+    console.error(`Unsupported sandbox mode: ${options.sandbox}`);
+    console.error('Supported sandbox modes: read-only, workspace-write');
+    console.error('danger-full-access is not supported by AgentFlow.');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (sandboxOverride !== undefined && executorName !== 'codex') {
+    console.error('--sandbox is only supported for codex executor.');
     process.exitCode = 1;
     return;
   }
@@ -85,6 +101,7 @@ export async function runExecutorCommand(stepId: string, options: RunExecutorOpt
     candidateOutputPath: path.join(runDir, 'execution-result.candidate.md'),
     timeoutMs,
     confirmed: executorName === 'codex' ? options.confirm === true : undefined,
+    sandboxOverride,
   };
 
   const executor = createExecutor(executorName, config);
@@ -123,6 +140,10 @@ function createExecutor(executorName: ExecutorName, config: Awaited<ReturnType<t
 
 function isExecutorName(value: string): value is ExecutorName {
   return value === 'dry-run' || value === 'manual' || value === 'codex';
+}
+
+function parseSandboxOverride(value: string): CodexSandboxMode | undefined {
+  return value === 'read-only' || value === 'workspace-write' ? value : undefined;
 }
 
 function toRelativePath(targetPath: string): string {
