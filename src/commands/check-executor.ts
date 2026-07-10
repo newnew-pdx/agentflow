@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { access } from 'node:fs/promises';
 import path from 'node:path';
 import { readExecutorConfig } from '../executors/executor-config.js';
+import { detectCodexSandbox } from '../executors/codex-cli-executor.js';
 import { assertInitialized } from '../workflow/step-store.js';
 
 export async function checkExecutorCommand(executorName: string): Promise<void> {
@@ -29,6 +30,8 @@ export async function checkExecutorCommand(executorName: string): Promise<void> 
   console.log(`PromptMode: ${config.codex.promptMode}`);
   console.log(`TimeoutMs: ${config.codex.timeoutMs}`);
   console.log(`MaxOutputChars: ${config.codex.maxOutputChars}`);
+  const configuredSandbox = detectCodexSandbox(config.codex.args);
+  console.log(`Configured Sandbox: ${configuredSandbox ?? 'unknown'}`);
   console.log(`Command found: ${resolved.found ? 'yes' : 'no'}`);
   if (resolved.path) {
     console.log(`Resolved path: ${resolved.path}`);
@@ -40,6 +43,11 @@ export async function checkExecutorCommand(executorName: string): Promise<void> 
   if (config.codex.promptMode === 'stdin') {
     console.log(
       'Encoding note: promptMode=stdin sends the full execution request through stdin. For Chinese UTF-8 prompts on Windows, prefer promptMode=file-reference.',
+    );
+  }
+  if (!configuredSandbox) {
+    console.log(
+      'Warning: Could not detect --sandbox in codex args. --sandbox override will fail unless codex args contain --sandbox read-only or --sandbox workspace-write.',
     );
   }
 

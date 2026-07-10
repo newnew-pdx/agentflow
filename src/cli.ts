@@ -85,6 +85,7 @@ export function createCli(): Command {
     .argument('<stepId>', 'Step ID, for example S001')
     .option('--executor <executor>', 'executor to run: dry-run, manual, codex', 'dry-run')
     .option('--confirm', 'allow a real external executor to start')
+    .option('--sandbox <mode>', 'codex sandbox override: read-only, workspace-write')
     .action(runExecutorCommand);
 
   program

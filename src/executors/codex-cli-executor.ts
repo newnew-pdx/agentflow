@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { CodexExecutorConfig } from './executor-config.js';
-import type { Executor, ExecutorInput, ExecutorRunResult } from './executor.js';
+import type { CodexSandboxMode, Executor, ExecutorInput, ExecutorRunResult } from './executor.js';
 import { createTimedResult, writeExecutorOutput } from './executor-run-store.js';
 
 export class CodexCliExecutor implements Executor {
@@ -14,7 +14,8 @@ export class CodexCliExecutor implements Executor {
     const startedAt = new Date();
     const executionRequest = await readFile(input.executionRequestPath, 'utf8');
     const command = this.config.command;
-    const args = this.config.args;
+    let args = [...this.config.args];
+    let effectiveSandbox = detectCodexSandbox(args);
     const timeoutMs = input.timeoutMs;
     const maxOutputChars = this.config.maxOutputChars;
     const promptMode = this.config.promptMode;
@@ -25,6 +26,8 @@ export class CodexCliExecutor implements Executor {
     });
 
     try {
+      args = applyCodexSandboxOverride(this.config.args, input.sandboxOverride);
+      effectiveSandbox = detectCodexSandbox(args);
       const result = await runCommand({
         command,
         args,
@@ -52,6 +55,8 @@ export class CodexCliExecutor implements Executor {
           stderr: output.stderr,
           truncated: output.truncated,
           promptMode,
+          sandboxOverride: input.sandboxOverride,
+          effectiveSandbox,
           stdinPreview: stdin,
         }),
       );
@@ -73,6 +78,8 @@ export class CodexCliExecutor implements Executor {
         args,
         timeoutMs,
         promptMode,
+        sandboxOverride: input.sandboxOverride,
+        effectiveSandbox,
         errorMessage,
       });
     } catch (error: unknown) {
@@ -97,6 +104,8 @@ export class CodexCliExecutor implements Executor {
           stderr: errorMessage,
           truncated: false,
           promptMode,
+          sandboxOverride: input.sandboxOverride,
+          effectiveSandbox,
           stdinPreview: stdin,
           notes: isMissingCommand
             ? [
@@ -121,6 +130,8 @@ export class CodexCliExecutor implements Executor {
         args,
         timeoutMs,
         promptMode,
+        sandboxOverride: input.sandboxOverride,
+        effectiveSandbox,
         errorMessage,
       });
     }
@@ -202,6 +213,8 @@ function renderCodexOutput(input: {
   stderr: string;
   truncated: boolean;
   promptMode: string;
+  sandboxOverride?: CodexSandboxMode;
+  effectiveSandbox?: CodexSandboxMode | null;
   stdinPreview: string;
   notes?: string[];
 }): string {
@@ -221,6 +234,8 @@ function renderCodexOutput(input: {
 - Command: ${input.command}
 - Args: ${input.args.length > 0 ? input.args.join(' ') : '(none)'}
 - PromptMode: ${input.promptMode}
+- Sandbox Override: ${input.sandboxOverride ?? '(none)'}
+- Effective Sandbox: ${input.effectiveSandbox ?? 'unknown'}
 - Truncated: ${input.truncated ? 'yes' : 'no'}
 
 ## Stdin Prompt
@@ -239,6 +254,34 @@ ${input.stderr || '(empty)'}
 
 ${notes.map((note) => `- ${note}`).join('\n')}
 `;
+}
+
+export function applyCodexSandboxOverride(args: string[], sandboxOverride?: CodexSandboxMode): string[] {
+  if (sandboxOverride === undefined) return [...args];
+
+  const sandboxPattern = /--sandbox\s+(read-only|workspace-write)/;
+  let replaced = false;
+  const nextArgs = args.map((arg) => {
+    if (!sandboxPattern.test(arg)) return arg;
+    replaced = true;
+    return arg.replace(sandboxPattern, `--sandbox ${sandboxOverride}`);
+  });
+
+  if (!replaced) {
+    throw new Error(
+      'Could not apply Codex sandbox override. Check .agent/config.yaml codex args contain --sandbox read-only or --sandbox workspace-write.',
+    );
+  }
+
+  return nextArgs;
+}
+
+export function detectCodexSandbox(args: string[]): CodexSandboxMode | undefined {
+  for (const arg of args) {
+    const match = /--sandbox\s+(read-only|workspace-write)/.exec(arg);
+    if (match?.[1] === 'read-only' || match?.[1] === 'workspace-write') return match[1];
+  }
+  return undefined;
 }
 
 function isCommandNotFound(error: unknown): boolean {

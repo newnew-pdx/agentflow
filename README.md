@@ -1,5 +1,15 @@
 # AgentFlow
 
+## Step15-A Update: Codex Sandbox Override
+
+`run-executor` now supports an explicit Codex-only sandbox override:
+
+```bash
+npm run dev -- run-executor S010 --executor codex --confirm --sandbox workspace-write
+```
+
+`read-only` remains the default safe mode from `.agent/config.yaml`; `workspace-write` must be passed explicitly and still requires `--confirm`. AgentFlow still does not automatically import candidates, verify, review, commit, or push. See [Step15 documentation](docs/steps/step15-codex-workspace-write-pilot.md).
+
 ## Step14 更新：Codex Executor Safe Pilot
 
 当前版本新增 `check-executor codex`，并为真实 Codex executor 增加显式确认、安全记录、超时和输出截断：

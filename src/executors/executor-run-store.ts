@@ -16,6 +16,8 @@ export type ExecutorRunRecord = {
   args?: string[];
   timeoutMs?: number;
   promptMode?: string;
+  sandboxOverride?: ExecutorRunResult['sandboxOverride'] | null;
+  effectiveSandbox?: ExecutorRunResult['effectiveSandbox'];
   errorMessage?: string;
   startedAt: string;
   finishedAt: string;
@@ -49,6 +51,8 @@ export async function writeExecutorRunRecord(input: ExecutorInput, result: Execu
     args: result.args,
     timeoutMs: result.timeoutMs,
     promptMode: result.promptMode,
+    sandboxOverride: result.sandboxOverride ?? null,
+    effectiveSandbox: result.effectiveSandbox ?? null,
     errorMessage: result.errorMessage,
     startedAt: result.startedAt,
     finishedAt: result.finishedAt,
@@ -102,6 +106,8 @@ export function createTimedResult(input: {
   args?: string[];
   timeoutMs?: number;
   promptMode?: string;
+  sandboxOverride?: ExecutorRunResult['sandboxOverride'];
+  effectiveSandbox?: ExecutorRunResult['effectiveSandbox'];
   errorMessage?: string;
 }): ExecutorRunResult {
   const finishedAt = new Date();
@@ -122,6 +128,8 @@ export function createTimedResult(input: {
     args: input.args,
     timeoutMs: input.timeoutMs,
     promptMode: input.promptMode,
+    sandboxOverride: input.sandboxOverride,
+    effectiveSandbox: input.effectiveSandbox,
     errorMessage: input.errorMessage,
   };
 }
