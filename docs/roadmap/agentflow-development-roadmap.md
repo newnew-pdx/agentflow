@@ -165,7 +165,7 @@ Step16 has now confirmed the items above with formal commands and recorded evide
 我们正在继续 AgentFlow 项目，目前准备讨论 Step16：稳定主分支基线。
 
 当前已知基线：
-- Step0～Step15 已形成纵向能力链，但 main、远端和主分支复验仍标记为 Needs verification。
+- Step0～Step16 已形成纵向能力链；main、origin/main 和主分支复验已在 Step16 中确认，正式验证记录起始于 `3a4057b`。
 
 本 Step 目标：
 - 确认 main/远端/工作区，重跑 build、typecheck、CLI help 和 check-executor，并刷新 Context Pack。
