@@ -102,7 +102,8 @@ Step16 has now confirmed the items above with formal commands and recorded evide
 - `npm run build` (exit 0): passed.
 - `npm run typecheck` (exit 0): passed.
 - `npm run dev -- --help` (exit 0): passed.
-- `npm run dev -- check-executor codex` (exit 0): passed. The configured `cmd.exe` wrapper resolved successfully, reported `read-only` sandbox mode, and used the file-reference prompt mode.
+- Initial Codex-worktree `npm run dev -- check-executor codex` (exit 0): passed. That worktree's configured `cmd.exe` wrapper resolved successfully, reported `read-only` sandbox mode, and used the file-reference prompt mode.
+- Final main `npm run dev -- check-executor codex` (exit 0): passed in normal PowerShell. The main worktree resolved the direct `codex` command at `D:\nodejs\codex`; its ignored local executor configuration uses stdin prompt mode and has no configured sandbox override.
 - Known limitation: the four checks were rerun in a normal terminal because the restricted runner prevented `tsx/esbuild` from spawning a child process (`spawn EPERM`); the normal-terminal results above are the authoritative verification evidence.
 
 ### Goal
