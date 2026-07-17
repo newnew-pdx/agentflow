@@ -181,7 +181,7 @@ Step16 has now confirmed the items above with formal commands and recorded evide
 
 ## Step17：自动化测试骨架
 
-**Status:** Completed
+**Status:** Incomplete
 
 ### Execution record (2026-07-17)
 
@@ -192,7 +192,7 @@ Step16 has now confirmed the items above with formal commands and recorded evide
 - Verification: `npm run build`, `npm run typecheck`, `npm run dev -- --help`, and two consecutive `npm test` runs all exited `0` in Windows PowerShell. The real repository worktree, ignored `.agent`, repository lock state, and global Git identity presence were checked before and after; no test-created change was found.
 - Known limitation: this Step establishes the test harness only; it intentionally does not provide historical full-command coverage, Codex execution tests, Web tests, or CI.
 - Step17 implementation commit: `8987c07bc9a67ac6839e1753ccdfe11938704181` (`step17: add isolated test skeleton`).
-- Remote branch: `origin/codex/step17-test-skeleton`.
+- Remote branch: `origin/codex/step17-test-skeleton` is pending explicit authorization to publish; the initial restricted-network push attempt ended with a TLS connection error and no remote write.
 - Step18 has not been started.
 
 ### Goal
