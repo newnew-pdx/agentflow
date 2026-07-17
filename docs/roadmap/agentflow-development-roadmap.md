@@ -181,7 +181,19 @@ Step16 has now confirmed the items above with formal commands and recorded evide
 
 ## Step17：自动化测试骨架
 
-**Status:** Planned
+**Status:** Completed
+
+### Execution record (2026-07-17)
+
+- Test entry: `npm test` runs `npm run build --silent && tsx --test test/*.test.ts`.
+- Test architecture: `test/helpers/fixtures.ts` creates unique system-temporary project directories with isolated `.agent`, `HOME`, `USERPROFILE`, `TMP`, and `TEMP` paths; it always removes them in `finally`, with bounded Windows retry handling. The Git fixture initializes a repository, sets only repository-local identity, and creates an initial commit. `test/helpers/cli.ts` invokes the compiled `dist/index.js` through `process.execPath` with explicit argument arrays, cwd, environment, captured output, exit code, spawn errors, and timeout handling.
+- Minimal tests: compiled CLI help succeeds; temporary Git identity and initial commit work; temporary-directory cleanup survives a throwing callback; `init` writes only under an explicit temporary cwd; callers can use the Git fixture with `try/finally` cleanup.
+- Isolation: test subprocesses use only temporary cwd paths and the test fixtures override user and temporary-directory environment roots without clearing the rest of the Node/Git environment. No test invokes Codex, Web, or a network API.
+- Verification: `npm run build`, `npm run typecheck`, `npm run dev -- --help`, and two consecutive `npm test` runs all exited `0` in Windows PowerShell. The real repository worktree, ignored `.agent`, repository lock state, and global Git identity presence were checked before and after; no test-created change was found.
+- Known limitation: this Step establishes the test harness only; it intentionally does not provide historical full-command coverage, Codex execution tests, Web tests, or CI.
+- Step17 implementation commit: `8987c07bc9a67ac6839e1753ccdfe11938704181` (`step17: add isolated test skeleton`).
+- Remote branch: `origin/codex/step17-test-skeleton`.
+- Step18 has not been started.
 
 ### Goal
 
